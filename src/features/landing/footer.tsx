@@ -42,9 +42,7 @@ export function Footer() {
 					{/* Brand column */}
 					<div className="col-span-2 md:col-span-1">
 						<div className="flex items-center gap-2 mb-4">
-							<div className="w-8 h-8 rounded-lg bg-gradient-brand flex items-center justify-center">
-								<span className="text-white font-bold text-sm">S</span>
-							</div>
+							<img src="/images/logo.png" alt="SayCal" className="h-8 w-auto" />
 							<span className="font-bold text-xl">SayCal</span>
 						</div>
 						<p className="text-sm text-muted-foreground mb-4">

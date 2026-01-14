@@ -17,9 +17,7 @@ export function Navbar() {
 				<div className="flex h-16 items-center justify-between">
 					{/* Logo */}
 					<a href="/" className="flex items-center gap-2">
-						<div className="w-8 h-8 rounded-lg bg-gradient-brand flex items-center justify-center">
-							<span className="text-white font-bold text-sm">S</span>
-						</div>
+						<img src="/images/logo.png" alt="SayCal" className="h-8 w-auto" />
 						<span className="font-bold text-xl">SayCal</span>
 					</a>
 

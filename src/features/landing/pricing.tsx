@@ -1,4 +1,4 @@
-import { Check, Key, Star } from "lucide-react";
+import { Check, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -45,23 +45,6 @@ export function Pricing() {
 			icon: Star,
 			highlighted: true,
 		},
-		{
-			name: m.pricing_tier_power_name(),
-			price: m.pricing_tier_power_price(),
-			period: m.pricing_tier_power_period(),
-			description: m.pricing_tier_power_description(),
-			features: [
-				m.pricing_tier_power_feature_1(),
-				m.pricing_tier_power_feature_2(),
-				m.pricing_tier_power_feature_3(),
-				m.pricing_tier_power_feature_4(),
-			],
-			cta: m.pricing_tier_power_cta(),
-			ctaVariant: "outline" as const,
-			note: m.pricing_tier_power_note(),
-			icon: Key,
-			highlighted: false,
-		},
 	];
 
 	return (
@@ -77,7 +60,7 @@ export function Pricing() {
 				</p>
 
 				{/* Pricing cards */}
-				<div className="grid md:grid-cols-3 gap-8 mb-12">
+				<div className="grid md:grid-cols-2 gap-8 mb-12 max-w-4xl mx-auto">
 					{tiers.map((tier) => (
 						<Card
 							key={tier.name}
