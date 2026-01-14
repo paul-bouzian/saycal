@@ -2,46 +2,46 @@ import { Github, MapPin, Quote, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { m } from "@/paraglide/messages";
 
-const testimonials = [
-	{
-		quote: m.testimonial_1_quote(),
-		author: m.testimonial_1_author(),
-		role: m.testimonial_1_role(),
-		result: m.testimonial_1_result(),
-	},
-	{
-		quote: m.testimonial_2_quote(),
-		author: m.testimonial_2_author(),
-		role: m.testimonial_2_role(),
-		result: m.testimonial_2_result(),
-	},
-	{
-		quote: m.testimonial_3_quote(),
-		author: m.testimonial_3_author(),
-		role: m.testimonial_3_role(),
-		result: m.testimonial_3_result(),
-	},
-];
-
-const trustIndicators = [
-	{
-		icon: Github,
-		label: m.trust_indicator_1_label(),
-		description: m.trust_indicator_1_desc(),
-	},
-	{
-		icon: MapPin,
-		label: m.trust_indicator_2_label(),
-		description: m.trust_indicator_2_desc(),
-	},
-	{
-		icon: Shield,
-		label: m.trust_indicator_3_label(),
-		description: m.trust_indicator_3_desc(),
-	},
-];
-
 export function Testimonials() {
+	const testimonials = [
+		{
+			quote: m.testimonial_1_quote(),
+			author: m.testimonial_1_author(),
+			role: m.testimonial_1_role(),
+			result: m.testimonial_1_result(),
+		},
+		{
+			quote: m.testimonial_2_quote(),
+			author: m.testimonial_2_author(),
+			role: m.testimonial_2_role(),
+			result: m.testimonial_2_result(),
+		},
+		{
+			quote: m.testimonial_3_quote(),
+			author: m.testimonial_3_author(),
+			role: m.testimonial_3_role(),
+			result: m.testimonial_3_result(),
+		},
+	];
+
+	const trustIndicators = [
+		{
+			icon: Github,
+			label: m.trust_indicator_1_label(),
+			description: m.trust_indicator_1_desc(),
+		},
+		{
+			icon: MapPin,
+			label: m.trust_indicator_2_label(),
+			description: m.trust_indicator_2_desc(),
+		},
+		{
+			icon: Shield,
+			label: m.trust_indicator_3_label(),
+			description: m.trust_indicator_3_desc(),
+		},
+	];
+
 	return (
 		<section className="py-20 px-6">
 			<div className="max-w-5xl mx-auto">

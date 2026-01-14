@@ -3,14 +3,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { m } from "@/paraglide/messages";
 
-const navLinks = [
-	{ label: m.link_features(), href: "#features" },
-	{ label: m.link_pricing(), href: "#pricing" },
-	{ label: m.link_faq(), href: "#faq" },
-];
-
 export function Navbar() {
 	const [isOpen, setIsOpen] = useState(false);
+	const navLinks = [
+		{ label: m.link_features(), href: "#features" },
+		{ label: m.link_pricing(), href: "#pricing" },
+		{ label: m.link_faq(), href: "#faq" },
+	];
 
 	return (
 		<header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

@@ -1,30 +1,30 @@
 import { AudioWaveform, CalendarDays, Download, PenLine } from "lucide-react";
 import { m } from "@/paraglide/messages";
 
-const features = [
-	{
-		icon: AudioWaveform,
-		title: m.features_item_1_title(),
-		description: m.features_item_1_desc(),
-	},
-	{
-		icon: CalendarDays,
-		title: m.features_item_2_title(),
-		description: m.features_item_2_desc(),
-	},
-	{
-		icon: PenLine,
-		title: m.features_item_3_title(),
-		description: m.features_item_3_desc(),
-	},
-	{
-		icon: Download,
-		title: m.features_item_4_title(),
-		description: m.features_item_4_desc(),
-	},
-];
-
 export function Features() {
+	const features = [
+		{
+			icon: AudioWaveform,
+			title: m.features_item_1_title(),
+			description: m.features_item_1_desc(),
+		},
+		{
+			icon: CalendarDays,
+			title: m.features_item_2_title(),
+			description: m.features_item_2_desc(),
+		},
+		{
+			icon: PenLine,
+			title: m.features_item_3_title(),
+			description: m.features_item_3_desc(),
+		},
+		{
+			icon: Download,
+			title: m.features_item_4_title(),
+			description: m.features_item_4_desc(),
+		},
+	];
+
 	return (
 		<section id="features" className="py-20 px-6 bg-muted/30">
 			<div className="max-w-5xl mx-auto">

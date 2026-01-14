@@ -2,30 +2,30 @@ import { Code2, LayoutGrid, Mic, Smartphone } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { m } from "@/paraglide/messages";
 
-const benefits = [
-	{
-		icon: Mic,
-		title: m.solution_benefit_1_title(),
-		description: m.solution_benefit_1_desc(),
-	},
-	{
-		icon: LayoutGrid,
-		title: m.solution_benefit_2_title(),
-		description: m.solution_benefit_2_desc(),
-	},
-	{
-		icon: Smartphone,
-		title: m.solution_benefit_3_title(),
-		description: m.solution_benefit_3_desc(),
-	},
-	{
-		icon: Code2,
-		title: m.solution_benefit_4_title(),
-		description: m.solution_benefit_4_desc(),
-	},
-];
-
 export function Solution() {
+	const benefits = [
+		{
+			icon: Mic,
+			title: m.solution_benefit_1_title(),
+			description: m.solution_benefit_1_desc(),
+		},
+		{
+			icon: LayoutGrid,
+			title: m.solution_benefit_2_title(),
+			description: m.solution_benefit_2_desc(),
+		},
+		{
+			icon: Smartphone,
+			title: m.solution_benefit_3_title(),
+			description: m.solution_benefit_3_desc(),
+		},
+		{
+			icon: Code2,
+			title: m.solution_benefit_4_title(),
+			description: m.solution_benefit_4_desc(),
+		},
+	];
+
 	return (
 		<section className="py-20 px-6">
 			<div className="max-w-5xl mx-auto">

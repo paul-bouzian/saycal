@@ -2,34 +2,38 @@ import { Github, Twitter } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { m } from "@/paraglide/messages";
 
-const footerLinks = {
-	product: [
-		{ label: m.link_features(), href: "#features" },
-		{ label: m.link_pricing(), href: "#pricing" },
-		{ label: m.link_faq(), href: "#faq" },
-	],
-	resources: [
-		{ label: m.footer_link_docs(), href: "#" },
-		{ label: m.footer_link_github(), href: "https://github.com" },
-		{ label: m.footer_link_changelog(), href: "#" },
-	],
-	legal: [
-		{ label: m.footer_link_imprint(), href: "#" },
-		{ label: m.footer_link_privacy(), href: "#" },
-		{ label: m.footer_link_terms(), href: "#" },
-	],
-};
-
-const socialLinks = [
-	{ icon: Github, href: "https://github.com", label: m.footer_social_github() },
-	{
-		icon: Twitter,
-		href: "https://twitter.com",
-		label: m.footer_social_twitter(),
-	},
-];
-
 export function Footer() {
+	const footerLinks = {
+		product: [
+			{ label: m.link_features(), href: "#features" },
+			{ label: m.link_pricing(), href: "#pricing" },
+			{ label: m.link_faq(), href: "#faq" },
+		],
+		resources: [
+			{ label: m.footer_link_docs(), href: "#" },
+			{ label: m.footer_link_github(), href: "https://github.com" },
+			{ label: m.footer_link_changelog(), href: "#" },
+		],
+		legal: [
+			{ label: m.footer_link_imprint(), href: "#" },
+			{ label: m.footer_link_privacy(), href: "#" },
+			{ label: m.footer_link_terms(), href: "#" },
+		],
+	};
+
+	const socialLinks = [
+		{
+			icon: Github,
+			href: "https://github.com",
+			label: m.footer_social_github(),
+		},
+		{
+			icon: Twitter,
+			href: "https://twitter.com",
+			label: m.footer_social_twitter(),
+		},
+	];
+
 	return (
 		<footer className="py-16 px-6 bg-muted/30">
 			<div className="max-w-6xl mx-auto">

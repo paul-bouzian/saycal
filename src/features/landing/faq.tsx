@@ -6,42 +6,42 @@ import {
 } from "@/components/ui/accordion";
 import { m } from "@/paraglide/messages";
 
-const faqs = [
-	{
-		question: m.faq_1_question(),
-		answer: m.faq_1_answer(),
-	},
-	{
-		question: m.faq_2_question(),
-		answer: m.faq_2_answer(),
-	},
-	{
-		question: m.faq_3_question(),
-		answer: m.faq_3_answer(),
-	},
-	{
-		question: m.faq_4_question(),
-		answer: m.faq_4_answer(),
-	},
-	{
-		question: m.faq_5_question(),
-		answer: m.faq_5_answer(),
-	},
-	{
-		question: m.faq_6_question(),
-		answer: m.faq_6_answer(),
-	},
-	{
-		question: m.faq_7_question(),
-		answer: m.faq_7_answer(),
-	},
-	{
-		question: m.faq_8_question(),
-		answer: m.faq_8_answer(),
-	},
-];
-
 export function FAQ() {
+	const faqs = [
+		{
+			question: m.faq_1_question(),
+			answer: m.faq_1_answer(),
+		},
+		{
+			question: m.faq_2_question(),
+			answer: m.faq_2_answer(),
+		},
+		{
+			question: m.faq_3_question(),
+			answer: m.faq_3_answer(),
+		},
+		{
+			question: m.faq_4_question(),
+			answer: m.faq_4_answer(),
+		},
+		{
+			question: m.faq_5_question(),
+			answer: m.faq_5_answer(),
+		},
+		{
+			question: m.faq_6_question(),
+			answer: m.faq_6_answer(),
+		},
+		{
+			question: m.faq_7_question(),
+			answer: m.faq_7_answer(),
+		},
+		{
+			question: m.faq_8_question(),
+			answer: m.faq_8_answer(),
+		},
+	];
+
 	return (
 		<section id="faq" className="py-20 px-6 bg-muted/30">
 			<div className="max-w-3xl mx-auto">

@@ -5,65 +5,65 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { m } from "@/paraglide/messages";
 
-const tiers = [
-	{
-		name: m.pricing_tier_free_name(),
-		price: m.pricing_tier_free_price(),
-		period: m.pricing_tier_free_period(),
-		description: m.pricing_tier_free_description(),
-		features: [
-			m.pricing_tier_free_feature_1(),
-			m.pricing_tier_free_feature_2(),
-			m.pricing_tier_free_feature_3(),
-			m.pricing_tier_free_feature_4(),
-			m.pricing_tier_free_feature_5(),
-			m.pricing_tier_free_feature_6(),
-			m.pricing_tier_free_feature_7(),
-		],
-		cta: m.pricing_tier_free_cta(),
-		ctaVariant: "outline" as const,
-		note: m.pricing_tier_free_note(),
-		icon: null,
-		highlighted: false,
-	},
-	{
-		name: m.pricing_tier_premium_name(),
-		price: m.pricing_tier_premium_price(),
-		period: m.pricing_tier_premium_period(),
-		description: m.pricing_tier_premium_description(),
-		features: [
-			m.pricing_tier_premium_feature_1(),
-			m.pricing_tier_premium_feature_2(),
-			m.pricing_tier_premium_feature_3(),
-			m.pricing_tier_premium_feature_4(),
-			m.pricing_tier_premium_feature_5(),
-		],
-		cta: m.pricing_tier_premium_cta(),
-		ctaVariant: "default" as const,
-		note: m.pricing_tier_premium_note(),
-		icon: Star,
-		highlighted: true,
-	},
-	{
-		name: m.pricing_tier_power_name(),
-		price: m.pricing_tier_power_price(),
-		period: m.pricing_tier_power_period(),
-		description: m.pricing_tier_power_description(),
-		features: [
-			m.pricing_tier_power_feature_1(),
-			m.pricing_tier_power_feature_2(),
-			m.pricing_tier_power_feature_3(),
-			m.pricing_tier_power_feature_4(),
-		],
-		cta: m.pricing_tier_power_cta(),
-		ctaVariant: "outline" as const,
-		note: m.pricing_tier_power_note(),
-		icon: Key,
-		highlighted: false,
-	},
-];
-
 export function Pricing() {
+	const tiers = [
+		{
+			name: m.pricing_tier_free_name(),
+			price: m.pricing_tier_free_price(),
+			period: m.pricing_tier_free_period(),
+			description: m.pricing_tier_free_description(),
+			features: [
+				m.pricing_tier_free_feature_1(),
+				m.pricing_tier_free_feature_2(),
+				m.pricing_tier_free_feature_3(),
+				m.pricing_tier_free_feature_4(),
+				m.pricing_tier_free_feature_5(),
+				m.pricing_tier_free_feature_6(),
+				m.pricing_tier_free_feature_7(),
+			],
+			cta: m.pricing_tier_free_cta(),
+			ctaVariant: "outline" as const,
+			note: m.pricing_tier_free_note(),
+			icon: null,
+			highlighted: false,
+		},
+		{
+			name: m.pricing_tier_premium_name(),
+			price: m.pricing_tier_premium_price(),
+			period: m.pricing_tier_premium_period(),
+			description: m.pricing_tier_premium_description(),
+			features: [
+				m.pricing_tier_premium_feature_1(),
+				m.pricing_tier_premium_feature_2(),
+				m.pricing_tier_premium_feature_3(),
+				m.pricing_tier_premium_feature_4(),
+				m.pricing_tier_premium_feature_5(),
+			],
+			cta: m.pricing_tier_premium_cta(),
+			ctaVariant: "default" as const,
+			note: m.pricing_tier_premium_note(),
+			icon: Star,
+			highlighted: true,
+		},
+		{
+			name: m.pricing_tier_power_name(),
+			price: m.pricing_tier_power_price(),
+			period: m.pricing_tier_power_period(),
+			description: m.pricing_tier_power_description(),
+			features: [
+				m.pricing_tier_power_feature_1(),
+				m.pricing_tier_power_feature_2(),
+				m.pricing_tier_power_feature_3(),
+				m.pricing_tier_power_feature_4(),
+			],
+			cta: m.pricing_tier_power_cta(),
+			ctaVariant: "outline" as const,
+			note: m.pricing_tier_power_note(),
+			icon: Key,
+			highlighted: false,
+		},
+	];
+
 	return (
 		<section id="pricing" className="py-20 px-6">
 			<div className="max-w-6xl mx-auto">
@@ -85,7 +85,7 @@ export function Pricing() {
 								"relative flex flex-col",
 								tier.highlighted
 									? "border-primary shadow-xl shadow-primary/10 scale-105"
-									: "border-border shadow-lg"
+									: "border-border shadow-lg",
 							)}
 						>
 							{tier.highlighted && (
@@ -122,7 +122,8 @@ export function Pricing() {
 									variant={tier.ctaVariant}
 									className={cn(
 										"w-full",
-										tier.highlighted && "bg-gradient-brand hover:bg-gradient-brand-hover text-white"
+										tier.highlighted &&
+											"bg-gradient-brand hover:bg-gradient-brand-hover text-white",
 									)}
 								>
 									{tier.cta}

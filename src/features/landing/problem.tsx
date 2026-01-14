@@ -1,25 +1,25 @@
 import { Clock, MousePointerClick, Settings2 } from "lucide-react";
 import { m } from "@/paraglide/messages";
 
-const painPoints = [
-	{
-		icon: Clock,
-		title: m.problem_pain_1_title(),
-		description: m.problem_pain_1_desc(),
-	},
-	{
-		icon: MousePointerClick,
-		title: m.problem_pain_2_title(),
-		description: m.problem_pain_2_desc(),
-	},
-	{
-		icon: Settings2,
-		title: m.problem_pain_3_title(),
-		description: m.problem_pain_3_desc(),
-	},
-];
-
 export function Problem() {
+	const painPoints = [
+		{
+			icon: Clock,
+			title: m.problem_pain_1_title(),
+			description: m.problem_pain_1_desc(),
+		},
+		{
+			icon: MousePointerClick,
+			title: m.problem_pain_2_title(),
+			description: m.problem_pain_2_desc(),
+		},
+		{
+			icon: Settings2,
+			title: m.problem_pain_3_title(),
+			description: m.problem_pain_3_desc(),
+		},
+	];
+
 	return (
 		<section className="py-20 px-6 bg-muted/30">
 			<div className="max-w-5xl mx-auto">
