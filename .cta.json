@@ -1,0 +1,29 @@
+{
+  "projectName": "calendar",
+  "mode": "file-router",
+  "typescript": true,
+  "packageManager": "npm",
+  "tailwind": true,
+  "addOnOptions": {
+    "drizzle": {
+      "database": "postgresql"
+    }
+  },
+  "git": true,
+  "version": 1,
+  "framework": "react-cra",
+  "chosenAddOns": [
+    "biome",
+    "cloudflare",
+    "start",
+    "neon",
+    "drizzle",
+    "form",
+    "paraglide",
+    "tanstack-query",
+    "shadcn",
+    "t3env",
+    "table",
+    "store"
+  ]
+}
