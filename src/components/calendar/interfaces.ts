@@ -12,7 +12,7 @@ export interface IEvent {
 	endDate: string;
 	title: string;
 	color: TEventColor;
-	description: string;
+	description?: string;
 	user: IUser;
 }
 

@@ -60,7 +60,7 @@ export function AddEditEventDialog({
 	const isEditing = !!event;
 
 	const initialDates = useMemo(() => {
-		if (!isEditing && !event) {
+		if (!event) {
 			if (!startDate) {
 				const now = new Date();
 				return { startDate: now, endDate: addMinutes(now, 30) };
@@ -80,7 +80,7 @@ export function AddEditEventDialog({
 			startDate: new Date(event.startDate),
 			endDate: new Date(event.endDate),
 		};
-	}, [startDate, startTime, event, isEditing]);
+	}, [startDate, startTime, event]);
 
 	const form = useForm<TEventFormData>({
 		resolver: zodResolver(eventSchema),
@@ -117,7 +117,6 @@ export function AddEditEventDialog({
 							name: "Jeraidi Yassir",
 							picturePath: null,
 						},
-				color: values.color,
 			};
 
 			if (isEditing) {
@@ -225,7 +224,7 @@ export function AddEditEventDialog({
 							name="description"
 							render={({ field, fieldState }) => (
 								<FormItem>
-									<FormLabel className="required">Description</FormLabel>
+									<FormLabel>Description</FormLabel>
 									<FormControl>
 										<Textarea
 											{...field}
