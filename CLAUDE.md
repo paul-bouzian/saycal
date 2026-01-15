@@ -5,12 +5,12 @@ Application calendrier minimaliste avec création d'événements par la voix. St
 ## Commandes essentielles
 
 ```bash
-npm run dev          # Serveur dev (port 3000)
-npm run build        # Build production
-npm run check        # Lint + format (Biome)
-npm run test         # Tests Vitest
-npm run db:push      # Push schema vers Neon
-npm run db:studio    # Interface Drizzle Studio
+bun run dev          # Serveur dev (port 3000)
+bun run build        # Build production
+bun run check        # Lint + format (Biome)
+bun run test         # Tests Vitest
+bun run db:push      # Push schema vers Neon
+bun run db:studio    # Interface Drizzle Studio
 ```
 
 ## Architecture
@@ -47,7 +47,7 @@ Importer les messages depuis le runtime généré:
 import { m } from "@/paraglide/messages"
 <h1>{m.hero_title()}</h1>
 ```
-Les fichiers `messages/*.json` sont la source. Le runtime se régénère au `npm run dev`.
+Les fichiers `messages/*.json` sont la source. Le runtime se régénère au `bun run dev`.
 
 ### Composants
 - Functional components uniquement
@@ -65,8 +65,8 @@ const sql = await getClient()
 
 Workflow migrations:
 1. Modifier `src/db/schema.ts`
-2. `npm run db:generate` (génère migration)
-3. `npm run db:push` (applique)
+2. `bun run db:generate` (génère migration)
+3. `bun run db:push` (applique)
 
 ## Fichiers auto-générés (ne pas éditer)
 
@@ -83,7 +83,7 @@ Workflow migrations:
 
 Cloudflare Workers. Build et deploy:
 ```bash
-npm run deploy
+bun run deploy
 ```
 
 ## Variables d'environnement

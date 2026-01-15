@@ -163,19 +163,19 @@ function DemoDrizzle() {
               <li>
                 Run:{' '}
                 <code className="px-2 py-1 rounded bg-black/30 text-purple-300">
-                  npx drizzle-kit generate
+                  bunx drizzle-kit generate
                 </code>
               </li>
               <li>
                 Run:{' '}
                 <code className="px-2 py-1 rounded bg-black/30 text-purple-300">
-                  npx drizzle-kit migrate
+                  bunx drizzle-kit migrate
                 </code>
               </li>
               <li>
                 Optional:{' '}
                 <code className="px-2 py-1 rounded bg-black/30 text-purple-300">
-                  npx drizzle-kit studio
+                  bunx drizzle-kit studio
                 </code>
               </li>
             </ol>
