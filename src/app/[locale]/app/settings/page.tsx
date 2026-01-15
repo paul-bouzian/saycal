@@ -24,7 +24,7 @@ export default function SettingsPage() {
 	const timeFormatId = useId();
 	const weekStartId = useId();
 	const remindersId = useId();
-	const { theme, setTheme, resolvedTheme } = useTheme();
+	const { theme, setTheme } = useTheme();
 
 	return (
 		<div className="max-w-2xl space-y-6 p-6">

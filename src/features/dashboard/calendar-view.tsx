@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Suspense, useCallback, useMemo, useRef } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef } from "react";
 import { CalendarBody } from "@/components/calendar/calendar-body";
 import { CalendarProvider } from "@/components/calendar/contexts/calendar-context";
 import { DndProvider } from "@/components/calendar/contexts/dnd-context";
@@ -152,12 +152,18 @@ function CalendarContent() {
 	}, [userId, userEmail, userName]);
 
 	// Convert events for calendar
-	const calendarEvents = useMemo(() => {
-		idMapRef.current.clear();
-		return dbEvents.map((event) =>
-			toCalendarEvent(event, defaultUser, idMapRef.current),
+	const { calendarEvents, idMap } = useMemo(() => {
+		const map = new Map<string, number>();
+		const events = dbEvents.map((event) =>
+			toCalendarEvent(event, defaultUser, map),
 		);
+		return { calendarEvents: events, idMap: map };
 	}, [dbEvents, defaultUser]);
+
+	// Store map in ref for event handlers
+	useEffect(() => {
+		idMapRef.current = idMap;
+	}, [idMap]);
 
 	// Users list (just current user for now)
 	const users = useMemo(() => [defaultUser], [defaultUser]);
