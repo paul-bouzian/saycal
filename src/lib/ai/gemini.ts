@@ -15,29 +15,33 @@ export interface VoiceResponse {
 function getSystemPrompt(): string {
 	const now = new Date();
 	const dateStr = format(now, "EEEE d MMMM yyyy 'à' HH:mm", { locale: fr });
+	const tomorrowDate = format(
+		new Date(now.getTime() + 24 * 60 * 60 * 1000),
+		"yyyy-MM-dd",
+	);
 
 	return `Tu es l'assistant vocal de SayCal, une application de calendrier.
-Tu aides l'utilisateur à gérer ses événements par la voix.
 
 Date et heure actuelles: ${dateStr}
+Date de demain (format YYYY-MM-DD): ${tomorrowDate}
 
-Tu peux:
-- Créer des événements (createEvent)
-- Modifier des événements (updateEvent)
-- Supprimer des événements (deleteEvent)
-- Lister des événements (getEvents)
+RÈGLES IMPORTANTES:
+1. Utilise TOUJOURS le format YYYY-MM-DD pour les dates (ex: 2026-01-16)
+2. Utilise TOUJOURS le format HH:MM pour les heures (ex: 18:00, 09:30)
+3. "demain" = ${tomorrowDate}
+4. "dix-huit heures" ou "18h" = 18:00
+5. "neuf heures" ou "9h" = 09:00
+6. Durée par défaut = 1 heure
 
-Règles:
-- "demain" = demain
-- "lundi prochain" = le prochain lundi
-- Si pas de durée précisée, durée = 1 heure
-- Réponds toujours en français, de manière concise et amicale
+COMPORTEMENT:
+- Si l'utilisateur donne une DATE et une HEURE → crée l'événement IMMÉDIATEMENT
+- Si l'utilisateur ne donne PAS d'heure → demande "À quelle heure ?"
+- Si le titre n'est pas clair → génère un titre (ex: "rendez-vous demain" → titre: "Rendez-vous")
+- Après création → confirme brièvement (ex: "C'est noté ! Rendez-vous créé pour demain à 18h.")
 
-Comportement pour la création d'événements:
-- Si l'utilisateur donne le titre (ou une description suffisante), la date ET l'heure → exécute directement sans demander confirmation
-- Si l'heure n'est pas précisée → demande poliment à quelle heure (ex: "À quelle heure veux-tu ce rendez-vous ?")
-- Génère un titre clair et concis à partir de la description de l'utilisateur
-- Après une action réussie, confirme brièvement (ex: "C'est noté ! Rendez-vous avec mamie créé pour demain à 18h.")`;
+EXEMPLE:
+- "rendez-vous demain à 18h" → createEvent(title: "Rendez-vous", date: "${tomorrowDate}", startTime: "18:00")
+- "rendez-vous avec mamie demain à dix-huit heures" → createEvent(title: "Rendez-vous avec mamie", date: "${tomorrowDate}", startTime: "18:00")`;
 }
 
 export async function processWithTools(
@@ -70,22 +74,24 @@ export async function processWithTools(
 			userId,
 		);
 
-		switch (functionCall.name) {
-			case "createEvent":
-				lastAction = "created";
-				break;
-			case "updateEvent":
-				lastAction = "updated";
-				break;
-			case "deleteEvent":
-				lastAction = "deleted";
-				break;
-			case "getEvents":
-				lastAction = "listed";
-				if (result.events) {
-					eventsList = result.events as VoiceResponse["events"];
-				}
-				break;
+		if (result.success) {
+			switch (functionCall.name) {
+				case "createEvent":
+					lastAction = "created";
+					break;
+				case "updateEvent":
+					lastAction = "updated";
+					break;
+				case "deleteEvent":
+					lastAction = "deleted";
+					break;
+				case "getEvents":
+					lastAction = "listed";
+					if (result.events) {
+						eventsList = result.events as VoiceResponse["events"];
+					}
+					break;
+			}
 		}
 
 		response = await chat.sendMessage([

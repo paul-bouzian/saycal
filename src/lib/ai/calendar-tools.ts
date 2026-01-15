@@ -109,37 +109,60 @@ export async function executeCalendarTool(
 				endTime?: string;
 			};
 
+			if (!title || !date || !startTime) {
+				return {
+					success: false,
+					error: `Paramètres manquants: title=${title}, date=${date}, startTime=${startTime}`,
+				};
+			}
+
 			const startAt = parse(
 				`${date} ${startTime}`,
 				"yyyy-MM-dd HH:mm",
 				new Date(),
 			);
+
+			if (Number.isNaN(startAt.getTime())) {
+				return {
+					success: false,
+					error: `Format de date/heure invalide: date=${date}, startTime=${startTime}`,
+				};
+			}
+
 			const endAt = endTime
 				? parse(`${date} ${endTime}`, "yyyy-MM-dd HH:mm", new Date())
 				: addHours(startAt, 1);
 
-			const [event] = await db
-				.insert(events)
-				.values({
-					userId,
-					title,
-					startAt,
-					endAt,
-					createdVia: "voice",
-					color: "#B552D9",
-				})
-				.returning();
+			try {
+				const [event] = await db
+					.insert(events)
+					.values({
+						userId,
+						title,
+						startAt,
+						endAt,
+						createdVia: "voice",
+						color: "#B552D9",
+					})
+					.returning();
 
-			return {
-				success: true,
-				event: {
-					id: event.id,
-					title,
-					date,
-					startTime,
-					endTime: format(endAt, "HH:mm"),
-				},
-			};
+				return {
+					success: true,
+					event: {
+						id: event.id,
+						title,
+						date,
+						startTime,
+						endTime: format(endAt, "HH:mm"),
+					},
+				};
+			} catch (dbError) {
+				console.error("Database error:", dbError);
+				return {
+					success: false,
+					error: `Erreur base de données: ${dbError instanceof Error ? dbError.message : "inconnue"}`,
+				};
+			}
 		}
 
 		case "getEvents": {
