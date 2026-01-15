@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SayCal
 
-## Getting Started
+Application de calendrier moderne avec authentification et gestion d'événements.
 
-First, run the development server:
+## Stack technique
+
+- **Framework** : [Next.js 16](https://nextjs.org/) (App Router)
+- **Auth** : [Neon Auth](https://neon.tech/docs/guides/neon-authorize) (BetterAuth)
+- **Base de données** : [Neon PostgreSQL](https://neon.tech/) (Serverless)
+- **ORM** : [Drizzle ORM](https://orm.drizzle.team/)
+- **Data Fetching** : [TanStack Query](https://tanstack.com/query)
+- **UI** : [shadcn/ui](https://ui.shadcn.com/) + [Tailwind CSS](https://tailwindcss.com/)
+- **Animations** : [Framer Motion](https://www.framer.com/motion/)
+- **i18n** : [next-intl](https://next-intl-docs.vercel.app/) (FR/EN)
+- **Validation** : [Zod](https://zod.dev/)
+- **Package Manager** : [Bun](https://bun.sh/)
+
+## Prérequis
+
+- [Bun](https://bun.sh/) >= 1.0
+- Compte [Neon](https://neon.tech/) pour la base de données
+
+## Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Cloner le repo
+git clone https://github.com/paul-bouzian/saycal.git
+cd saycal
+
+# Installer les dépendances
+bun install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Configuration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Créer un fichier `.env.local` à la racine :
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Database (Neon)
+DATABASE_URL=postgresql://...
+DATABASE_AUTHENTICATED_URL=postgresql://...
 
-## Learn More
+# Auth (Neon Auth)
+BETTER_AUTH_SECRET=your-secret-key
+BETTER_AUTH_URL=http://localhost:3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Base de données
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Générer les migrations
+bun run db:generate
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Appliquer les migrations
+bun run db:migrate
 
-## Deploy on Vercel
+# Ouvrir Drizzle Studio
+bun run db:studio
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Développement
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# Lancer le serveur de développement
+bun run dev
+```
+
+Ouvrir [http://localhost:3000](http://localhost:3000).
+
+## Build
+
+```bash
+# Build de production
+bun run build
+
+# Lancer en production
+bun run start
+```
+
+## Structure du projet
+
+```
+src/
+├── app/                    # App Router (pages)
+│   └── [locale]/          # Routes internationalisées
+├── components/
+│   ├── calendar/          # Composants calendrier
+│   └── ui/                # Composants shadcn/ui
+├── db/                    # Schema Drizzle & connexion
+├── features/              # Features (landing, dashboard)
+├── i18n/                  # Configuration next-intl
+├── lib/                   # Utilitaires & actions serveur
+└── messages/              # Traductions (fr.json, en.json)
+```
+
+## Déploiement
+
+Le projet est optimisé pour [Vercel](https://vercel.com/).
+
+```bash
+# Déployer via Vercel CLI
+vercel
+```
+
+## Licence
+
+MIT
