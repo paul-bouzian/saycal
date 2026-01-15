@@ -107,13 +107,12 @@ function CalendarContent() {
 		return { startDate, endDate };
 	}, []);
 
-	// Fetch events
+	// Fetch events (userId is now extracted from session server-side)
 	const { data: dbEvents = [], isLoading } = useQuery({
 		queryKey: ["events", userId, dateRange.startDate, dateRange.endDate],
 		queryFn: async () => {
 			if (!userId) return [];
 			const result = await getEvents({
-				userId,
 				startDate: dateRange.startDate,
 				endDate: dateRange.endDate,
 			});
@@ -172,7 +171,6 @@ function CalendarContent() {
 			const hexColor = COLOR_TO_HEX[event.color] || "#B552D9";
 
 			await createMutation.mutateAsync({
-				userId,
 				title: event.title,
 				description: event.description || undefined,
 				startAt: new Date(event.startDate),
@@ -198,7 +196,6 @@ function CalendarContent() {
 
 			await updateMutation.mutateAsync({
 				id: uuid,
-				userId,
 				title: event.title,
 				description: event.description || undefined,
 				startAt: new Date(event.startDate),
@@ -219,7 +216,7 @@ function CalendarContent() {
 				return;
 			}
 
-			await deleteMutation.mutateAsync({ id: uuid, userId });
+			await deleteMutation.mutateAsync({ id: uuid });
 		},
 		[userId, deleteMutation],
 	);

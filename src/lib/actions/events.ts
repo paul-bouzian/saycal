@@ -4,25 +4,34 @@ import { and, eq, gte, lte } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db/index";
 import { events, insertEventSchema } from "@/db/schema";
+import { authServer } from "@/lib/auth-server";
+
+// Helper to get authenticated user ID
+async function getAuthenticatedUserId(): Promise<string> {
+	const { data: session } = await authServer.getSession();
+	if (!session?.user?.id) {
+		throw new Error("Unauthorized: No active session");
+	}
+	return session.user.id;
+}
 
 // Schema for date range query
 const dateRangeSchema = z.object({
-	userId: z.string().uuid(),
 	startDate: z.coerce.date(),
 	endDate: z.coerce.date(),
 });
 
 // Schema for creating an event
 const createEventSchema = insertEventSchema
-	.omit({ id: true, createdAt: true, updatedAt: true })
+	.omit({ id: true, userId: true, createdAt: true, updatedAt: true })
 	.extend({
-		userId: z.string().uuid(),
+		startAt: z.coerce.date(),
+		endAt: z.coerce.date(),
 	});
 
 // Schema for updating an event
 const updateEventSchema = z.object({
 	id: z.string().uuid(),
-	userId: z.string().uuid(),
 	title: z.string().min(1).max(200).optional(),
 	description: z.string().optional().nullable(),
 	startAt: z.coerce.date().optional(),
@@ -37,12 +46,12 @@ const updateEventSchema = z.object({
 // Schema for deleting an event
 const deleteEventSchema = z.object({
 	id: z.string().uuid(),
-	userId: z.string().uuid(),
 });
 
 // Fetch events for a date range
 export async function getEvents(input: z.infer<typeof dateRangeSchema>) {
-	const { userId, startDate, endDate } = dateRangeSchema.parse(input);
+	const userId = await getAuthenticatedUserId();
+	const { startDate, endDate } = dateRangeSchema.parse(input);
 
 	const result = await db.query.events.findMany({
 		where: and(
@@ -58,14 +67,21 @@ export async function getEvents(input: z.infer<typeof dateRangeSchema>) {
 
 // Create a new event
 export async function createEvent(input: z.infer<typeof createEventSchema>) {
+	const userId = await getAuthenticatedUserId();
 	const data = createEventSchema.parse(input);
-	const [newEvent] = await db.insert(events).values(data).returning();
+
+	const [newEvent] = await db
+		.insert(events)
+		.values({ ...data, userId })
+		.returning();
+
 	return newEvent;
 }
 
 // Update an event
 export async function updateEvent(input: z.infer<typeof updateEventSchema>) {
-	const { id, userId, ...updateData } = updateEventSchema.parse(input);
+	const userId = await getAuthenticatedUserId();
+	const { id, ...updateData } = updateEventSchema.parse(input);
 
 	// Only update fields that are provided
 	const fieldsToUpdate: Record<string, unknown> = {
@@ -91,7 +107,8 @@ export async function updateEvent(input: z.infer<typeof updateEventSchema>) {
 
 // Delete an event
 export async function deleteEvent(input: z.infer<typeof deleteEventSchema>) {
-	const { id, userId } = deleteEventSchema.parse(input);
+	const userId = await getAuthenticatedUserId();
+	const { id } = deleteEventSchema.parse(input);
 
 	await db
 		.delete(events)

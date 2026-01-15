@@ -38,11 +38,11 @@ Créer un fichier `.env.local` à la racine :
 ```env
 # Database (Neon)
 DATABASE_URL=postgresql://...
-DATABASE_AUTHENTICATED_URL=postgresql://...
 
 # Auth (Neon Auth)
-BETTER_AUTH_SECRET=your-secret-key
-BETTER_AUTH_URL=http://localhost:3000
+# URL de votre instance Neon Auth (depuis le dashboard Neon)
+NEXT_PUBLIC_NEON_AUTH_URL=https://your-project.auth.neon.tech
+NEON_AUTH_BASE_URL=https://your-project.auth.neon.tech
 ```
 
 ## Base de données
