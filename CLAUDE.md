@@ -68,8 +68,13 @@ The `messages/*.json` files are the source. The runtime regenerates on `bun run 
 Neon PostgreSQL + Drizzle ORM. Schema in `src/db/schema.ts`.
 
 ```typescript
-import { getClient } from "@/db"
-const sql = await getClient()
+import { db } from "@/db/index"
+
+// Query with Drizzle ORM
+const events = await db.query.events.findMany()
+
+// Insert with Drizzle ORM
+await db.insert(events).values({ ... })
 ```
 
 Migration workflow:
