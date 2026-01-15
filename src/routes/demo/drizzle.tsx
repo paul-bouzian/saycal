@@ -2,49 +2,25 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { desc } from "drizzle-orm";
 import { db } from "@/db/index";
-import { todos } from "@/db/schema";
+import { events } from "@/db/schema";
 
-const getTodos = createServerFn({
+const getEvents = createServerFn({
 	method: "GET",
-}).handler(async () => {
-	return await db.query.todos.findMany({
-		orderBy: [desc(todos.createdAt)],
-	});
-});
-
-const createTodo = createServerFn({
-	method: "POST",
-})
-	.inputValidator((data: { title: string }) => data)
-	.handler(async ({ data }) => {
-		await db.insert(todos).values({ title: data.title });
-		return { success: true };
-	});
+}).handler(() =>
+	db.query.events.findMany({
+		orderBy: [desc(events.createdAt)],
+		limit: 10,
+	}),
+);
 
 export const Route = createFileRoute("/demo/drizzle")({
 	component: DemoDrizzle,
-	loader: async () => await getTodos(),
+	loader: () => getEvents(),
 });
 
 function DemoDrizzle() {
 	const router = useRouter();
-	const todos = Route.useLoaderData();
-
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const formData = new FormData(e.target as HTMLFormElement);
-		const title = formData.get("title") as string;
-
-		if (!title) return;
-
-		try {
-			await createTodo({ data: { title } });
-			router.invalidate();
-			(e.target as HTMLFormElement).reset();
-		} catch (error) {
-			console.error("Failed to create todo:", error);
-		}
-	};
+	const eventsList = Route.useLoaderData();
 
 	return (
 		<div
@@ -71,7 +47,7 @@ function DemoDrizzle() {
 					}}
 				>
 					<div className="relative group">
-						<div className="absolute -inset-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 rounded-lg blur-lg opacity-60 group-hover:opacity-100 transition duration-500"></div>
+						<div className="absolute -inset-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 rounded-lg blur-lg opacity-60 group-hover:opacity-100 transition duration-500" />
 						<div className="relative bg-gradient-to-br from-indigo-600 to-purple-600 p-3 rounded-lg">
 							<img
 								src="/drizzle.svg"
@@ -85,12 +61,14 @@ function DemoDrizzle() {
 					</h1>
 				</div>
 
-				<h2 className="text-2xl font-bold mb-4 text-indigo-200">Todos</h2>
+				<h2 className="text-2xl font-bold mb-4 text-indigo-200">
+					Recent Events
+				</h2>
 
 				<ul className="space-y-3 mb-6">
-					{todos.map((todo) => (
+					{eventsList.map((event) => (
 						<li
-							key={todo.id}
+							key={event.id}
 							className="rounded-lg p-4 shadow-md border transition-all hover:scale-[1.02] cursor-pointer group"
 							style={{
 								background:
@@ -100,42 +78,37 @@ function DemoDrizzle() {
 						>
 							<div className="flex items-center justify-between">
 								<span className="text-lg font-medium text-white group-hover:text-indigo-200 transition-colors">
-									{todo.title}
+									{event.title}
 								</span>
-								<span className="text-xs text-indigo-300/70">#{todo.id}</span>
+								<span
+									className="w-3 h-3 rounded-full"
+									style={{ backgroundColor: event.color || "#B552D9" }}
+								/>
+							</div>
+							<div className="text-xs text-indigo-300/70 mt-2">
+								{new Date(event.startAt).toLocaleString()} -{" "}
+								{new Date(event.endAt).toLocaleString()}
 							</div>
 						</li>
 					))}
-					{todos.length === 0 && (
+					{eventsList.length === 0 && (
 						<li className="text-center py-8 text-indigo-300/70">
-							No todos yet. Create one below!
+							No events yet. Create one in the app!
 						</li>
 					)}
 				</ul>
 
-				<form onSubmit={handleSubmit} className="flex gap-2">
-					<input
-						type="text"
-						name="title"
-						placeholder="Add a new todo..."
-						className="flex-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all text-white placeholder-indigo-300/50"
-						style={{
-							background: "rgba(93, 103, 227, 0.1)",
-							borderColor: "rgba(93, 103, 227, 0.3)",
-							focusRing: "rgba(93, 103, 227, 0.5)",
-						}}
-					/>
-					<button
-						type="submit"
-						className="px-6 py-3 font-semibold rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 active:scale-95 whitespace-nowrap"
-						style={{
-							background: "linear-gradient(135deg, #5d67e3 0%, #8b5cf6 100%)",
-							color: "white",
-						}}
-					>
-						Add Todo
-					</button>
-				</form>
+				<button
+					type="button"
+					onClick={() => router.invalidate()}
+					className="w-full px-6 py-3 font-semibold rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 active:scale-95"
+					style={{
+						background: "linear-gradient(135deg, #5d67e3 0%, #8b5cf6 100%)",
+						color: "white",
+					}}
+				>
+					Refresh Events
+				</button>
 
 				<div
 					className="mt-8 p-6 rounded-lg border"
@@ -151,34 +124,21 @@ function DemoDrizzle() {
 						Next-generation ORM for Node.js & TypeScript with PostgreSQL
 					</p>
 					<div className="space-y-2 text-sm">
-						<p className="text-indigo-200 font-medium">Setup Instructions:</p>
-						<ol className="list-decimal list-inside space-y-2 text-indigo-300/80">
+						<p className="text-indigo-200 font-medium">Database Commands:</p>
+						<ul className="list-disc list-inside space-y-2 text-indigo-300/80">
 							<li>
-								Configure your{" "}
 								<code className="px-2 py-1 rounded bg-black/30 text-purple-300">
-									DATABASE_URL
+									bun run db:push
 								</code>{" "}
-								in .env.local
+								- Push schema to database
 							</li>
 							<li>
-								Run:{" "}
 								<code className="px-2 py-1 rounded bg-black/30 text-purple-300">
-									bunx drizzle-kit generate
-								</code>
+									bun run db:studio
+								</code>{" "}
+								- Open Drizzle Studio
 							</li>
-							<li>
-								Run:{" "}
-								<code className="px-2 py-1 rounded bg-black/30 text-purple-300">
-									bunx drizzle-kit migrate
-								</code>
-							</li>
-							<li>
-								Optional:{" "}
-								<code className="px-2 py-1 rounded bg-black/30 text-purple-300">
-									bunx drizzle-kit studio
-								</code>
-							</li>
-						</ol>
+						</ul>
 					</div>
 				</div>
 			</div>
