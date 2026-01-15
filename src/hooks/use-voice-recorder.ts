@@ -23,9 +23,31 @@ export function useVoiceRecorder(maxDuration = 30000): UseVoiceRecorderReturn {
 	const audioContextRef = useRef<AudioContext | null>(null);
 	const streamRef = useRef<MediaStream | null>(null);
 
+	const cleanup = useCallback(() => {
+		if (timerRef.current) {
+			clearInterval(timerRef.current);
+			timerRef.current = null;
+		}
+		if (streamRef.current) {
+			streamRef.current.getTracks().forEach((track) => track.stop());
+			streamRef.current = null;
+		}
+		if (audioContextRef.current && audioContextRef.current.state !== "closed") {
+			audioContextRef.current.close();
+		}
+		audioContextRef.current = null;
+		mediaRecorderRef.current = null;
+		chunksRef.current = [];
+		setAnalyserNode(null);
+		setIsRecording(false);
+	}, []);
+
 	const startRecording = useCallback(async () => {
 		try {
+			cleanup();
 			setError(null);
+			setDuration(0);
+
 			const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 			streamRef.current = stream;
 
@@ -42,8 +64,8 @@ export function useVoiceRecorder(maxDuration = 30000): UseVoiceRecorderReturn {
 				: "audio/webm";
 
 			const recorder = new MediaRecorder(stream, { mimeType });
-
 			chunksRef.current = [];
+
 			recorder.ondataavailable = (e) => {
 				if (e.data.size > 0) {
 					chunksRef.current.push(e.data);
@@ -53,7 +75,6 @@ export function useVoiceRecorder(maxDuration = 30000): UseVoiceRecorderReturn {
 			recorder.start(100);
 			mediaRecorderRef.current = recorder;
 			setIsRecording(true);
-			setDuration(0);
 
 			timerRef.current = setInterval(() => {
 				setDuration((d) => {
@@ -73,33 +94,28 @@ export function useVoiceRecorder(maxDuration = 30000): UseVoiceRecorderReturn {
 			setError("Permission microphone refusée");
 			throw err;
 		}
-	}, [maxDuration]);
+	}, [maxDuration, cleanup]);
 
 	const stopRecording = useCallback(async (): Promise<Blob> => {
 		return new Promise((resolve) => {
-			if (!mediaRecorderRef.current) {
-				resolve(new Blob());
+			const recorder = mediaRecorderRef.current;
+
+			if (!recorder || recorder.state === "inactive") {
+				const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+				cleanup();
+				resolve(blob);
 				return;
 			}
 
-			mediaRecorderRef.current.onstop = () => {
+			recorder.onstop = () => {
 				const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+				cleanup();
 				resolve(blob);
 			};
 
-			if (mediaRecorderRef.current.state === "recording") {
-				mediaRecorderRef.current.stop();
-			}
-
-			streamRef.current?.getTracks().forEach((track) => track.stop());
-
-			if (timerRef.current) clearInterval(timerRef.current);
-			if (audioContextRef.current) audioContextRef.current.close();
-
-			setIsRecording(false);
-			setAnalyserNode(null);
+			recorder.stop();
 		});
-	}, []);
+	}, [cleanup]);
 
 	return {
 		isRecording,
