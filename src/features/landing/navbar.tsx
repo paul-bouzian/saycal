@@ -36,14 +36,15 @@ export function Navbar() {
 
 					{/* Desktop CTA */}
 					<div className="hidden md:flex items-center gap-4">
-						<Button variant="ghost" size="sm">
-							{m.nav_sign_in()}
+						<Button variant="ghost" size="sm" asChild>
+							<a href="/auth/sign-in">{m.nav_sign_in()}</a>
 						</Button>
 						<Button
 							size="sm"
 							className="bg-gradient-brand hover:bg-gradient-brand-hover text-white"
+							asChild
 						>
-							{m.nav_try_free()}
+							<a href="/auth/sign-up">{m.nav_try_free()}</a>
 						</Button>
 					</div>
 
@@ -73,11 +74,14 @@ export function Navbar() {
 							</a>
 						))}
 						<div className="pt-4 space-y-2">
-							<Button variant="outline" className="w-full">
-								{m.nav_sign_in()}
+							<Button variant="outline" className="w-full" asChild>
+								<a href="/auth/sign-in">{m.nav_sign_in()}</a>
 							</Button>
-							<Button className="w-full bg-gradient-brand hover:bg-gradient-brand-hover text-white">
-								{m.nav_try_free()}
+							<Button
+								className="w-full bg-gradient-brand hover:bg-gradient-brand-hover text-white"
+								asChild
+							>
+								<a href="/auth/sign-up">{m.nav_try_free()}</a>
 							</Button>
 						</div>
 					</div>

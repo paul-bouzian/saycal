@@ -151,5 +151,7 @@
   "footer_social_github": "GitHub",
   "footer_social_twitter": "Twitter",
   "footer_copyright": "© {year} SayCal. Tous droits réservés.",
-  "footer_made_with_love": "Fait avec amour en France"
+  "footer_made_with_love": "Fait avec amour en France",
+  "auth_tagline": "Parle, c'est noté.",
+  "app_welcome": "Bienvenue {name}"
 }

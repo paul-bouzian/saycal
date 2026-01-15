@@ -1,3 +1,4 @@
+import { NeonAuthUIProvider } from "@neondatabase/neon-js/auth/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import {
@@ -7,6 +8,7 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { authClient } from "@/lib/auth";
 import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
@@ -102,7 +104,16 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function RootLayout() {
-	return <Outlet />;
+	return (
+		<NeonAuthUIProvider
+			authClient={authClient}
+			emailOTP
+			redirectTo="/app"
+			defaultTheme="light"
+		>
+			<Outlet />
+		</NeonAuthUIProvider>
+	);
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
