@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, Mic, Square, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useVoiceRecorder } from "@/hooks/use-voice-recorder";
@@ -24,7 +25,9 @@ interface VoicePanelProps {
 export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 	const [state, setState] = useState<PanelState>({ step: "idle" });
 	const [transcript, setTranscript] = useState<string | null>(null);
+	const autoCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+	const queryClient = useQueryClient();
 	const { startRecording, stopRecording, analyserNode, duration } =
 		useVoiceRecorder();
 
@@ -33,6 +36,14 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 			handleStartRecording();
 		}
 	}, [isOpen, state.step]);
+
+	useEffect(() => {
+		return () => {
+			if (autoCloseTimerRef.current) {
+				clearTimeout(autoCloseTimerRef.current);
+			}
+		};
+	}, []);
 
 	const handleStartRecording = async () => {
 		try {
@@ -58,6 +69,15 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 				step: "response",
 				message: response.result,
 			});
+
+			const hasAction = response.result.action;
+			if (hasAction) {
+				queryClient.invalidateQueries({ queryKey: ["events"] });
+
+				autoCloseTimerRef.current = setTimeout(() => {
+					handleClose();
+				}, 1500);
+			}
 		} catch (error) {
 			setState({
 				step: "error",
@@ -68,12 +88,20 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 	};
 
 	const handleClose = () => {
+		if (autoCloseTimerRef.current) {
+			clearTimeout(autoCloseTimerRef.current);
+			autoCloseTimerRef.current = null;
+		}
 		setState({ step: "idle" });
 		setTranscript(null);
 		onClose();
 	};
 
 	const handleNewCommand = () => {
+		if (autoCloseTimerRef.current) {
+			clearTimeout(autoCloseTimerRef.current);
+			autoCloseTimerRef.current = null;
+		}
 		setState({ step: "idle" });
 		setTranscript(null);
 		handleStartRecording();
