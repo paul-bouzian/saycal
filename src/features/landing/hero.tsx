@@ -11,7 +11,9 @@ export function Hero() {
 			<div className="relative max-w-4xl mx-auto text-center">
 				{/* Main headline */}
 				<h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
-					<span className="text-gradient-brand inline-block pr-1">{m.hero_title_emphasis()}</span>{" "}
+					<span className="text-gradient-brand inline-block pr-1">
+						{m.hero_title_emphasis()}
+					</span>{" "}
 					<span className="text-foreground">{m.hero_title_rest()}</span>
 				</h1>
 
