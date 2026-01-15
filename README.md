@@ -1,101 +1,179 @@
+<div align="center">
+
 # SayCal
 
-**Parle, c'est noté.**
+### 🗣️ Speak it. It's noted.
 
-Calendrier minimaliste avec création d'événements par la voix. Dites simplement "Dentiste demain à 14h" et l'événement est créé automatiquement.
+A minimalist calendar with voice-powered event creation.
+Just say *"Dentist tomorrow at 2pm"* and the event is created automatically.
 
-## Fonctionnalités
+[![TanStack Start](https://img.shields.io/badge/TanStack-Start-FF4154?style=flat-square&logo=react)](https://tanstack.com/start)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?style=flat-square&logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
+[![Neon](https://img.shields.io/badge/Neon-PostgreSQL-00E5CC?style=flat-square&logo=postgresql&logoColor=white)](https://neon.tech/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-- **Création vocale ultra-rapide** - Dictez vos événements en langage naturel
-- **Interface épurée** - Design moderne sans surcharge, vue jour/semaine/mois
-- **Multi-plateforme** - PWA responsive, parfaite sur mobile et desktop
-- **Open Source** - Code transparent, données sécurisées
+</div>
 
-## Stack Technique
+---
 
-| Catégorie | Technologie |
-|-----------|-------------|
-| Framework | TanStack Start (React 19) |
-| Déploiement | Cloudflare Workers |
-| Base de données | Neon PostgreSQL + Drizzle ORM |
-| Auth | Neon Auth |
-| IA | Deepgram (STT) + Gemini Flash (parsing) |
-| UI | shadcn/ui + Tailwind CSS |
-| i18n | Paraglide |
+## ✨ Features
 
-## Installation
+| Feature | Description |
+|---------|-------------|
+| 🎤 **Voice Creation** | Dictate events in natural language — done in under 5 seconds |
+| 🗓️ **Clean Interface** | Modern design with day/week/month views, no clutter |
+| 📱 **Multi-Platform** | Responsive PWA, perfect on mobile and desktop |
+| 🔓 **Open Source** | Transparent code, your data stays yours |
+
+---
+
+## 🛠️ Tech Stack
+
+<table>
+<tr>
+<td align="center" width="96">
+<img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/React-Dark.svg" width="48" height="48" alt="React" />
+<br><sub><b>React 19</b></sub>
+</td>
+<td align="center" width="96">
+<img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/TypeScript.svg" width="48" height="48" alt="TypeScript" />
+<br><sub><b>TypeScript</b></sub>
+</td>
+<td align="center" width="96">
+<img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/TailwindCSS-Dark.svg" width="48" height="48" alt="Tailwind" />
+<br><sub><b>Tailwind CSS</b></sub>
+</td>
+<td align="center" width="96">
+<img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/Cloudflare-Dark.svg" width="48" height="48" alt="Cloudflare" />
+<br><sub><b>Workers</b></sub>
+</td>
+<td align="center" width="96">
+<img src="https://raw.githubusercontent.com/tandpfun/skill-icons/main/icons/PostgreSQL-Dark.svg" width="48" height="48" alt="PostgreSQL" />
+<br><sub><b>Neon DB</b></sub>
+</td>
+</tr>
+</table>
+
+**Full stack:** TanStack Start • Drizzle ORM • shadcn/ui • Paraglide i18n • Deepgram STT • Gemini Flash
+
+---
+
+## 🚀 Quick Start
 
 ```bash
-# Cloner le repo
+# Clone the repository
 git clone https://github.com/paul-bouzian/saycal.git
 cd saycal
 
-# Installer les dépendances
+# Install dependencies
 bun install
 
-# Configurer les variables d'environnement
+# Set up environment variables
 cp .env.example .env.local
-# Éditer .env.local avec vos clés
 
-# Lancer le serveur de développement
+# Start development server
 bun run dev
 ```
 
-L'application sera disponible sur [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-## Commandes
+---
 
-```bash
-bun run dev          # Serveur dev (port 3000)
-bun run build        # Build production
-bun run check        # Lint + format (Biome)
-bun run test         # Tests Vitest
-bun run deploy       # Déployer sur Cloudflare
-bun run db:push      # Push schema vers Neon
-bun run db:generate  # Générer migration
-bun run db:studio    # Interface Drizzle Studio
-```
+## 📋 Available Scripts
 
-## Architecture
+| Command | Description |
+|---------|-------------|
+| `bun run dev` | Start dev server on port 3000 |
+| `bun run build` | Build for production |
+| `bun run check` | Run Biome linter & formatter |
+| `bun run test` | Run Vitest tests |
+| `bun run deploy` | Deploy to Cloudflare Workers |
+| `bun run db:push` | Push schema to Neon |
+| `bun run db:generate` | Generate migration |
+| `bun run db:studio` | Open Drizzle Studio |
+
+---
+
+## 📁 Project Structure
 
 ```
 src/
-├── routes/          # Routing fichier-based (TanStack Router)
-├── features/        # Composants par feature
-├── components/ui/   # Composants shadcn/ui
-├── db/              # Schema Drizzle ORM
-├── paraglide/       # Runtime i18n (auto-généré)
-└── lib/             # Utilitaires
-messages/            # Traductions (en, fr, de)
-specs/               # Documentation technique
+├── routes/           # File-based routing (TanStack Router)
+├── features/         # Feature-based components
+├── components/ui/    # shadcn/ui components
+├── db/               # Drizzle ORM schema
+├── paraglide/        # i18n runtime (auto-generated)
+└── lib/              # Utilities
+
+messages/             # Translations (en, fr, de)
+specs/                # Technical documentation
 ```
 
-## Design System
+---
 
-| Couleur | Hex | Usage |
-|---------|-----|-------|
-| Primaire | `#B552D9` | Actions principales, boutons |
-| Secondaire | `#FA8485` | Accents, highlights |
-| Gradient | `135deg` | CTAs, bouton micro |
+## 🎨 Design System
 
-## Variables d'environnement
+<table>
+<tr>
+<td align="center">
+<img src="https://via.placeholder.com/80/B552D9/FFFFFF?text=+" alt="Primary" />
+<br><code>#B552D9</code>
+<br><sub>Primary</sub>
+</td>
+<td align="center">
+<img src="https://via.placeholder.com/80/FA8485/FFFFFF?text=+" alt="Secondary" />
+<br><code>#FA8485</code>
+<br><sub>Secondary</sub>
+</td>
+<td align="center">
+<img src="https://via.placeholder.com/160x80/B552D9/FA8485?text=Gradient" alt="Gradient" />
+<br><code>135deg</code>
+<br><sub>Brand Gradient</sub>
+</td>
+</tr>
+</table>
+
+---
+
+## 🔐 Environment Variables
+
+Create a `.env.local` file with the following variables:
 
 ```env
-VITE_DATABASE_URL=          # URL Neon directe
-VITE_DATABASE_URL_POOLER=   # URL Neon pooler
-DEEPGRAM_API_KEY=           # Clé API Deepgram
-GEMINI_API_KEY=             # Clé API Gemini
-STRIPE_SECRET_KEY=          # Clé secrète Stripe
+# Database
+VITE_DATABASE_URL=postgresql://...
+VITE_DATABASE_URL_POOLER=postgresql://...
+
+# AI Services
+DEEPGRAM_API_KEY=your_deepgram_key
+GEMINI_API_KEY=your_gemini_key
+
+# Payments (optional)
+STRIPE_SECRET_KEY=your_stripe_key
 ```
 
-## Contribution
+---
 
-1. Fork le projet
-2. Créer une branche (`git checkout -b feature/ma-feature`)
-3. Commit les changements (`git commit -m 'feat: ajouter ma feature'`)
-4. Push (`git push origin feature/ma-feature`)
-5. Ouvrir une Pull Request
+## 🤝 Contributing
 
-## License
+Contributions are welcome! Here's how you can help:
 
-MIT
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'feat: add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+Made with ❤️ by [Paul Bouzian](https://github.com/paul-bouzian)
+
+</div>
