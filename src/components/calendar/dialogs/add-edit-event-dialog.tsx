@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addMinutes, format, set } from "date-fns";
-import { type ReactNode, useEffect, useMemo } from "react";
+import { type ReactNode, useEffect, useId, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -49,6 +49,17 @@ interface IProps {
 	event?: IEvent;
 }
 
+// Simple hash function to convert string to number
+function hashString(str: string): number {
+	let hash = 0;
+	for (let i = 0; i < str.length; i++) {
+		const char = str.charCodeAt(i);
+		hash = (hash << 5) - hash + char;
+		hash = hash & hash;
+	}
+	return Math.abs(hash);
+}
+
 export function AddEditEventDialog({
 	children,
 	startDate,
@@ -58,6 +69,10 @@ export function AddEditEventDialog({
 	const { isOpen, onClose, onToggle } = useDisclosure();
 	const { addEvent, updateEvent } = useCalendar();
 	const isEditing = !!event;
+	// Use useId for deterministic ID generation
+	const uniqueId = useId();
+	const newEventId = hashString(uniqueId);
+	const newUserId = uniqueId.replace(/:/g, "-");
 
 	const initialDates = useMemo(() => {
 		if (!event) {
@@ -109,11 +124,11 @@ export function AddEditEventDialog({
 				...values,
 				startDate: format(values.startDate, "yyyy-MM-dd'T'HH:mm:ss"),
 				endDate: format(values.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
-				id: isEditing ? event.id : Math.floor(Math.random() * 1000000),
+				id: isEditing ? event.id : newEventId,
 				user: isEditing
 					? event.user
 					: {
-							id: Math.floor(Math.random() * 1000000).toString(),
+							id: newUserId,
 							name: "Jeraidi Yassir",
 							picturePath: null,
 						},

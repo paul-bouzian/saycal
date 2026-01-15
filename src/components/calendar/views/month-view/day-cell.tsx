@@ -6,10 +6,7 @@ import { motion } from "framer-motion";
 import { useMemo, useCallback } from "react";
 
 import { cn } from "@/lib/utils";
-import {
-  staggerContainer,
-  transition,
-} from "@/components/calendar/animations";
+import { transition } from "@/components/calendar/animations";
 import { EventListDialog } from "@/components/calendar/dialogs/events-list-dialog";
 import { DroppableArea } from "@/components/calendar/dnd/droppable-area";
 import { getMonthCellEvents } from "@/components/calendar/helpers";
@@ -193,6 +190,7 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
       showDesktopMore,
       showMoreCount,
       renderEventAtPosition,
+      isMobile,
     ]
   );
 

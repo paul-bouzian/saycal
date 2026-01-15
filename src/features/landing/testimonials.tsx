@@ -64,7 +64,7 @@ export function Testimonials() {
 							<CardContent className="p-6">
 								<Quote className="w-8 h-8 text-primary/20 mb-4" />
 								<p className="text-foreground mb-4 leading-relaxed">
-									"{testimonial.quote}"
+									&ldquo;{testimonial.quote}&rdquo;
 								</p>
 								<div className="border-t border-border pt-4">
 									<p className="font-semibold">{testimonial.author}</p>
