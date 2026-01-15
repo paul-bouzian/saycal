@@ -40,23 +40,31 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 	};
 
 	useEffect(() => {
-		if (isOpen && state.step === "idle") {
-			handleStartRecording();
-		}
-	}, [isOpen, state.step]);
+		if (!isOpen || state.step !== "idle") return;
+
+		let cancelled = false;
+
+		(async () => {
+			try {
+				await startRecording();
+				if (!cancelled) {
+					setState({ step: "recording", duration: 0 });
+				}
+			} catch {
+				if (!cancelled) {
+					setState({ step: "error", message: "Microphone unavailable" });
+				}
+			}
+		})();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [isOpen, state.step, startRecording]);
 
 	useEffect(() => {
 		return () => clearAutoCloseTimer();
 	}, []);
-
-	const handleStartRecording = async () => {
-		try {
-			await startRecording();
-			setState({ step: "recording", duration: 0 });
-		} catch {
-			setState({ step: "error", message: "Microphone unavailable" });
-		}
-	};
 
 	const handleStopRecording = async () => {
 		const blob = await stopRecording();

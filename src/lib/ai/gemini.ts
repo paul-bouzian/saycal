@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { format } from "date-fns";
-import { calendarTools, executeCalendarTool } from "./calendar-tools";
+import { calendarTools, executeCalendarTool } from "@/lib/ai/calendar-tools";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 

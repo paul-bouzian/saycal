@@ -6,7 +6,7 @@ import {
 	type VoiceResponse,
 	type ConversationMessage,
 } from "@/lib/ai/gemini";
-import { checkVoiceQuota, incrementVoiceUsage } from "@/lib/quota";
+import { checkAndIncrementQuota } from "@/lib/quota";
 import { authServer } from "@/lib/auth-server";
 
 export interface ProcessVoiceResult {
@@ -26,11 +26,6 @@ export async function processVoiceCommand(
 
 	const userId = session.user.id;
 
-	const quota = await checkVoiceQuota(userId);
-	if (!quota.allowed) {
-		throw new Error("Voice quota reached. Upgrade to Premium to continue.");
-	}
-
 	const audioFile = formData.get("audio") as File;
 	if (!audioFile) {
 		throw new Error("Audio file missing");
@@ -42,6 +37,12 @@ export async function processVoiceCommand(
 		throw new Error("Empty audio file");
 	}
 
+	// Atomic quota check and increment - prevents race conditions
+	const quota = await checkAndIncrementQuota(userId);
+	if (!quota.allowed) {
+		throw new Error("Voice quota reached. Upgrade to Premium to continue.");
+	}
+
 	const transcript = await transcribeAudio(audioFile);
 
 	if (!transcript || transcript.trim() === "") {
@@ -50,11 +51,9 @@ export async function processVoiceCommand(
 
 	const result = await processWithTools(transcript, userId, conversationHistory);
 
-	await incrementVoiceUsage(userId);
-
 	return {
 		transcript,
 		result,
-		remaining: quota.remaining - 1,
+		remaining: quota.remaining,
 	};
 }
