@@ -2,13 +2,7 @@
 
 import { Calendar, Check, Edit, List, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface VoiceResponse {
-	type: "success" | "info" | "error";
-	text: string;
-	action?: "created" | "updated" | "deleted" | "listed";
-	events?: Array<{ title: string; date: string; time: string }>;
-}
+import type { VoiceResponse } from "@/lib/ai/gemini";
 
 const actionIcons = {
 	created: Calendar,

@@ -68,7 +68,6 @@ export async function processWithTools(
 		tools: [{ functionDeclarations: calendarTools }],
 	});
 
-	// Rebuild conversation history for Gemini
 	const history = conversationHistory.map((msg) => ({
 		role: msg.role === "user" ? "user" : "model",
 		parts: [{ text: msg.content }],
@@ -95,22 +94,16 @@ export async function processWithTools(
 		);
 
 		if (result.success) {
-			switch (functionCall.name) {
-				case "createEvent":
-					lastAction = "created";
-					break;
-				case "updateEvent":
-					lastAction = "updated";
-					break;
-				case "deleteEvent":
-					lastAction = "deleted";
-					break;
-				case "getEvents":
-					lastAction = "listed";
-					if (result.events) {
-						eventsList = result.events as VoiceResponse["events"];
-					}
-					break;
+			const actionMap: Record<string, VoiceResponse["action"]> = {
+				createEvent: "created",
+				updateEvent: "updated",
+				deleteEvent: "deleted",
+				getEvents: "listed",
+			};
+			lastAction = actionMap[functionCall.name];
+
+			if (functionCall.name === "getEvents" && result.events) {
+				eventsList = result.events as VoiceResponse["events"];
 			}
 		}
 

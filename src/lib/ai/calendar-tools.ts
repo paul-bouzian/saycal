@@ -174,10 +174,7 @@ export async function executeCalendarTool(
 			const end = endOfDay(parse(endDate, "yyyy-MM-dd", new Date()));
 
 			const userEvents = await db.query.events.findMany({
-				where: and(
-					eq(events.userId, userId),
-					// events that overlap with the range
-				),
+				where: eq(events.userId, userId),
 				orderBy: (events, { asc }) => [asc(events.startAt)],
 			});
 

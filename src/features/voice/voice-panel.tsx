@@ -32,6 +32,13 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 	const { startRecording, stopRecording, analyserNode, duration } =
 		useVoiceRecorder();
 
+	const clearAutoCloseTimer = () => {
+		if (autoCloseTimerRef.current) {
+			clearTimeout(autoCloseTimerRef.current);
+			autoCloseTimerRef.current = null;
+		}
+	};
+
 	useEffect(() => {
 		if (isOpen && state.step === "idle") {
 			handleStartRecording();
@@ -39,11 +46,7 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 	}, [isOpen, state.step]);
 
 	useEffect(() => {
-		return () => {
-			if (autoCloseTimerRef.current) {
-				clearTimeout(autoCloseTimerRef.current);
-			}
-		};
+		return () => clearAutoCloseTimer();
 	}, []);
 
 	const handleStartRecording = async () => {
@@ -71,7 +74,6 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 				message: response.result,
 			});
 
-			// Update history with new message and response
 			setConversationHistory((prev) => [
 				...prev,
 				{ role: "user", content: response.transcript },
@@ -96,10 +98,7 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 	};
 
 	const handleClose = () => {
-		if (autoCloseTimerRef.current) {
-			clearTimeout(autoCloseTimerRef.current);
-			autoCloseTimerRef.current = null;
-		}
+		clearAutoCloseTimer();
 		setState({ step: "idle" });
 		setTranscript(null);
 		setConversationHistory([]);
@@ -107,13 +106,9 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 	};
 
 	const handleNewCommand = () => {
-		if (autoCloseTimerRef.current) {
-			clearTimeout(autoCloseTimerRef.current);
-			autoCloseTimerRef.current = null;
-		}
+		clearAutoCloseTimer();
 		setTranscript(null);
 		setState({ step: "idle" });
-		// useEffect will trigger handleStartRecording automatically
 	};
 
 	if (!isOpen) return null;
