@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,10 +12,16 @@ const geistMono = Geist_Mono({
 	subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+	themeColor: "#B552D9",
+};
+
 export const metadata: Metadata = {
+	metadataBase: new URL(
+		process.env.NEXT_PUBLIC_APP_URL || "https://saycal.app",
+	),
 	title: "SayCal - Voice-Driven Calendar",
 	description: "Manage your calendar with your voice",
-	themeColor: "#B552D9",
 	icons: {
 		icon: [
 			{ url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
