@@ -1,5 +1,5 @@
 {
-  "name": "calendar",
+  "name": "saycal",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,7 +15,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "worktree": "bun scripts/worktree.ts"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.13.8",
