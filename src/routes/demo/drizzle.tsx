@@ -1,27 +1,35 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { desc } from "drizzle-orm";
-import { db } from "@/db/index";
-import { events } from "@/db/schema";
+import { createFileRoute } from "@tanstack/react-router";
 
-const getEvents = createServerFn({
-	method: "GET",
-}).handler(() =>
-	db.query.events.findMany({
-		orderBy: [desc(events.createdAt)],
-		limit: 10,
-	}),
-);
+// Sample data for demo purposes - no real user data exposed
+const sampleEvents = [
+	{
+		id: "1",
+		title: "Team Standup",
+		startAt: new Date("2026-01-15T09:00:00"),
+		endAt: new Date("2026-01-15T09:30:00"),
+		color: "#B552D9",
+	},
+	{
+		id: "2",
+		title: "Product Review",
+		startAt: new Date("2026-01-15T14:00:00"),
+		endAt: new Date("2026-01-15T15:00:00"),
+		color: "#FA8485",
+	},
+	{
+		id: "3",
+		title: "Client Call",
+		startAt: new Date("2026-01-16T10:00:00"),
+		endAt: new Date("2026-01-16T11:00:00"),
+		color: "#5d67e3",
+	},
+];
 
 export const Route = createFileRoute("/demo/drizzle")({
 	component: DemoDrizzle,
-	loader: () => getEvents(),
 });
 
 function DemoDrizzle() {
-	const router = useRouter();
-	const eventsList = Route.useLoaderData();
-
 	return (
 		<div
 			className="flex items-center justify-center min-h-screen p-4 text-white"
@@ -62,11 +70,11 @@ function DemoDrizzle() {
 				</div>
 
 				<h2 className="text-2xl font-bold mb-4 text-indigo-200">
-					Recent Events
+					Sample Events
 				</h2>
 
 				<ul className="space-y-3 mb-6">
-					{eventsList.map((event) => (
+					{sampleEvents.map((event) => (
 						<li
 							key={event.id}
 							className="rounded-lg p-4 shadow-md border transition-all hover:scale-[1.02] cursor-pointer group"
@@ -82,36 +90,19 @@ function DemoDrizzle() {
 								</span>
 								<span
 									className="w-3 h-3 rounded-full"
-									style={{ backgroundColor: event.color || "#B552D9" }}
+									style={{ backgroundColor: event.color }}
 								/>
 							</div>
 							<div className="text-xs text-indigo-300/70 mt-2">
-								{new Date(event.startAt).toLocaleString()} -{" "}
-								{new Date(event.endAt).toLocaleString()}
+								{event.startAt.toLocaleString()} -{" "}
+								{event.endAt.toLocaleString()}
 							</div>
 						</li>
 					))}
-					{eventsList.length === 0 && (
-						<li className="text-center py-8 text-indigo-300/70">
-							No events yet. Create one in the app!
-						</li>
-					)}
 				</ul>
 
-				<button
-					type="button"
-					onClick={() => router.invalidate()}
-					className="w-full px-6 py-3 font-semibold rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 active:scale-95"
-					style={{
-						background: "linear-gradient(135deg, #5d67e3 0%, #8b5cf6 100%)",
-						color: "white",
-					}}
-				>
-					Refresh Events
-				</button>
-
 				<div
-					className="mt-8 p-6 rounded-lg border"
+					className="p-6 rounded-lg border"
 					style={{
 						background: "rgba(93, 103, 227, 0.05)",
 						borderColor: "rgba(93, 103, 227, 0.2)",
