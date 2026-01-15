@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { db } from "@/db/index";
 import { userSubscriptions } from "@/db/schema";
 
-const FREE_VOICE_LIMIT = 10;
+const FREE_VOICE_LIMIT = 100;
 
 interface QuotaResult {
 	allowed: boolean;

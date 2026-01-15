@@ -8,7 +8,7 @@ import { useVoiceRecorder } from "@/hooks/use-voice-recorder";
 import { VoiceWaveform } from "./voice-waveform";
 import { VoiceMessage } from "./voice-message";
 import { processVoiceCommand } from "@/lib/actions/voice";
-import type { VoiceResponse } from "@/lib/ai/gemini";
+import type { VoiceResponse, ConversationMessage } from "@/lib/ai/gemini";
 
 type PanelState =
 	| { step: "idle" }
@@ -25,6 +25,7 @@ interface VoicePanelProps {
 export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 	const [state, setState] = useState<PanelState>({ step: "idle" });
 	const [transcript, setTranscript] = useState<string | null>(null);
+	const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
 	const autoCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	const queryClient = useQueryClient();
@@ -62,13 +63,20 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 			const formData = new FormData();
 			formData.append("audio", blob, "recording.webm");
 
-			const response = await processVoiceCommand(formData);
+			const response = await processVoiceCommand(formData, conversationHistory);
 
 			setTranscript(response.transcript);
 			setState({
 				step: "response",
 				message: response.result,
 			});
+
+			// Mettre à jour l'historique avec le nouveau message et la réponse
+			setConversationHistory((prev) => [
+				...prev,
+				{ role: "user", content: response.transcript },
+				{ role: "assistant", content: response.result.text },
+			]);
 
 			const hasAction = response.result.action;
 			if (hasAction) {
@@ -94,6 +102,7 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 		}
 		setState({ step: "idle" });
 		setTranscript(null);
+		setConversationHistory([]);
 		onClose();
 	};
 
@@ -102,9 +111,9 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 			clearTimeout(autoCloseTimerRef.current);
 			autoCloseTimerRef.current = null;
 		}
-		setState({ step: "idle" });
 		setTranscript(null);
-		handleStartRecording();
+		setState({ step: "idle" });
+		// Le useEffect va déclencher handleStartRecording automatiquement
 	};
 
 	if (!isOpen) return null;

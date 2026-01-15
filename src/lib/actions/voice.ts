@@ -1,7 +1,11 @@
 "use server";
 
 import { transcribeAudio } from "@/lib/ai/deepgram";
-import { processWithTools, type VoiceResponse } from "@/lib/ai/gemini";
+import {
+	processWithTools,
+	type VoiceResponse,
+	type ConversationMessage,
+} from "@/lib/ai/gemini";
 import { checkVoiceQuota, incrementVoiceUsage } from "@/lib/quota";
 import { authServer } from "@/lib/auth-server";
 
@@ -13,6 +17,7 @@ export interface ProcessVoiceResult {
 
 export async function processVoiceCommand(
 	formData: FormData,
+	conversationHistory: ConversationMessage[] = [],
 ): Promise<ProcessVoiceResult> {
 	const { data: session } = await authServer.getSession();
 	if (!session?.user?.id) {
@@ -31,13 +36,19 @@ export async function processVoiceCommand(
 		throw new Error("Fichier audio manquant");
 	}
 
+	console.log("[Voice] audio file received, size:", audioFile.size, "type:", audioFile.type);
+
+	if (audioFile.size === 0) {
+		throw new Error("Fichier audio vide");
+	}
+
 	const transcript = await transcribeAudio(audioFile);
 
 	if (!transcript || transcript.trim() === "") {
 		throw new Error("Je n'ai pas compris. Pouvez-vous répéter?");
 	}
 
-	const result = await processWithTools(transcript, userId);
+	const result = await processWithTools(transcript, userId, conversationHistory);
 
 	await incrementVoiceUsage(userId);
 

@@ -12,6 +12,11 @@ export interface VoiceResponse {
 	events?: Array<{ title: string; date: string; time: string }>;
 }
 
+export interface ConversationMessage {
+	role: "user" | "assistant";
+	content: string;
+}
+
 function getSystemPrompt(): string {
 	const now = new Date();
 	const dateStr = format(now, "EEEE d MMMM yyyy 'à' HH:mm", { locale: fr });
@@ -33,10 +38,17 @@ RÈGLES IMPORTANTES:
 5. "neuf heures" ou "9h" = 09:00
 6. Durée par défaut = 1 heure
 
-COMPORTEMENT:
-- Si l'utilisateur donne une DATE et une HEURE → crée l'événement IMMÉDIATEMENT
-- Si l'utilisateur ne donne PAS d'heure → demande "À quelle heure ?"
-- Si le titre n'est pas clair → génère un titre (ex: "rendez-vous demain" → titre: "Rendez-vous")
+COMPORTEMENT pour créer un événement:
+- Il faut 3 éléments: TITRE, DATE (jour) et HEURE
+- RETIENS les informations données dans les messages précédents de la conversation
+- Si les 3 sont donnés (dans ce message OU dans les précédents) → crée l'événement IMMÉDIATEMENT
+- Si un ou plusieurs manquent → demande TOUT ce qui manque dans UNE SEULE question
+  Exemples:
+  - "ajouter un rendez-vous" (manque date + heure) → "Pour quand et à quelle heure ?"
+  - "rendez-vous demain" (manque titre + heure) → "Quel titre et à quelle heure ?"
+  - "demain" seul (manque titre + heure) → "Quel rendez-vous et à quelle heure ?"
+  - "rendez-vous demain à 18h" → titre="Rendez-vous", crée immédiatement
+- Si le titre n'est pas explicite mais qu'on a date+heure → utilise "Rendez-vous" comme titre par défaut
 - Après création → confirme brièvement (ex: "C'est noté ! Rendez-vous créé pour demain à 18h.")
 
 EXEMPLE:
@@ -47,6 +59,7 @@ EXEMPLE:
 export async function processWithTools(
 	userMessage: string,
 	userId: string,
+	conversationHistory: ConversationMessage[] = [],
 ): Promise<VoiceResponse> {
 	const model = genAI.getGenerativeModel({
 		model: "gemini-2.0-flash-exp",
@@ -54,7 +67,13 @@ export async function processWithTools(
 		tools: [{ functionDeclarations: calendarTools }],
 	});
 
-	const chat = model.startChat();
+	// Reconstruire l'historique pour Gemini
+	const history = conversationHistory.map((msg) => ({
+		role: msg.role === "user" ? "user" : "model",
+		parts: [{ text: msg.content }],
+	})) as Array<{ role: "user" | "model"; parts: Array<{ text: string }> }>;
+
+	const chat = model.startChat({ history });
 	let response = await chat.sendMessage(userMessage);
 	let lastAction: VoiceResponse["action"] | undefined;
 	let eventsList: VoiceResponse["events"] | undefined;

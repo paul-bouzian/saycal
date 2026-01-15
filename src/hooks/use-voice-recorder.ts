@@ -23,33 +23,43 @@ export function useVoiceRecorder(maxDuration = 30000): UseVoiceRecorderReturn {
 	const audioContextRef = useRef<AudioContext | null>(null);
 	const streamRef = useRef<MediaStream | null>(null);
 
-	const cleanup = useCallback(() => {
+	const cleanup = useCallback(async () => {
+		console.log("[VoiceRecorder] cleanup started");
 		if (timerRef.current) {
 			clearInterval(timerRef.current);
 			timerRef.current = null;
 		}
+		if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+			console.log("[VoiceRecorder] stopping recorder, state:", mediaRecorderRef.current.state);
+			mediaRecorderRef.current.stop();
+		}
+		mediaRecorderRef.current = null;
 		if (streamRef.current) {
 			streamRef.current.getTracks().forEach((track) => track.stop());
 			streamRef.current = null;
 		}
 		if (audioContextRef.current && audioContextRef.current.state !== "closed") {
-			audioContextRef.current.close();
+			console.log("[VoiceRecorder] closing audio context");
+			await audioContextRef.current.close();
 		}
 		audioContextRef.current = null;
-		mediaRecorderRef.current = null;
 		chunksRef.current = [];
 		setAnalyserNode(null);
 		setIsRecording(false);
+		console.log("[VoiceRecorder] cleanup done");
 	}, []);
 
 	const startRecording = useCallback(async () => {
+		console.log("[VoiceRecorder] startRecording called");
 		try {
-			cleanup();
+			await cleanup();
 			setError(null);
 			setDuration(0);
 
+			console.log("[VoiceRecorder] requesting microphone");
 			const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 			streamRef.current = stream;
+			console.log("[VoiceRecorder] got stream, tracks:", stream.getAudioTracks().length);
 
 			const audioContext = new AudioContext();
 			const source = audioContext.createMediaStreamSource(stream);
@@ -62,6 +72,7 @@ export function useVoiceRecorder(maxDuration = 30000): UseVoiceRecorderReturn {
 			const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
 				? "audio/webm;codecs=opus"
 				: "audio/webm";
+			console.log("[VoiceRecorder] using mimeType:", mimeType);
 
 			const recorder = new MediaRecorder(stream, { mimeType });
 			chunksRef.current = [];
@@ -69,12 +80,14 @@ export function useVoiceRecorder(maxDuration = 30000): UseVoiceRecorderReturn {
 			recorder.ondataavailable = (e) => {
 				if (e.data.size > 0) {
 					chunksRef.current.push(e.data);
+					console.log("[VoiceRecorder] chunk received, size:", e.data.size, "total chunks:", chunksRef.current.length);
 				}
 			};
 
 			recorder.start(100);
 			mediaRecorderRef.current = recorder;
 			setIsRecording(true);
+			console.log("[VoiceRecorder] recording started");
 
 			timerRef.current = setInterval(() => {
 				setDuration((d) => {
@@ -91,28 +104,37 @@ export function useVoiceRecorder(maxDuration = 30000): UseVoiceRecorderReturn {
 				}
 			}, maxDuration);
 		} catch (err) {
+			console.error("[VoiceRecorder] error:", err);
 			setError("Permission microphone refusée");
 			throw err;
 		}
 	}, [maxDuration, cleanup]);
 
 	const stopRecording = useCallback(async (): Promise<Blob> => {
+		console.log("[VoiceRecorder] stopRecording called");
+		const recorder = mediaRecorderRef.current;
+		const chunks = [...chunksRef.current];
+		console.log("[VoiceRecorder] current chunks:", chunks.length, "recorder state:", recorder?.state);
+
+		if (!recorder || recorder.state === "inactive") {
+			console.log("[VoiceRecorder] recorder inactive, creating blob from", chunks.length, "chunks");
+			const blob = new Blob(chunks, { type: "audio/webm" });
+			console.log("[VoiceRecorder] blob size:", blob.size);
+			await cleanup();
+			return blob;
+		}
+
 		return new Promise((resolve) => {
-			const recorder = mediaRecorderRef.current;
-
-			if (!recorder || recorder.state === "inactive") {
-				const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-				cleanup();
-				resolve(blob);
-				return;
-			}
-
-			recorder.onstop = () => {
-				const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-				cleanup();
+			recorder.onstop = async () => {
+				const finalChunks = [...chunksRef.current];
+				console.log("[VoiceRecorder] recorder stopped, creating blob from", finalChunks.length, "chunks");
+				const blob = new Blob(finalChunks, { type: "audio/webm" });
+				console.log("[VoiceRecorder] blob size:", blob.size);
+				await cleanup();
 				resolve(blob);
 			};
 
+			console.log("[VoiceRecorder] stopping recorder");
 			recorder.stop();
 		});
 	}, [cleanup]);
