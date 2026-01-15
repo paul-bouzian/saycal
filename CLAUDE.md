@@ -28,6 +28,15 @@ messages/            # Traductions JSON (en, fr, de)
 
 ## Conventions de code
 
+### Langue
+**Tout le code doit être en anglais:**
+- Noms de variables, fonctions, classes
+- Commentaires dans le code
+- Noms de branches git (ex: `feat/voice-assistant`)
+- Messages de commit
+- Titres et descriptions de PR
+- Documentation technique
+
 ### Imports
 Utiliser l'alias `@/` pour tous les imports internes:
 ```typescript
