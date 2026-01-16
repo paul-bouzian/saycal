@@ -17,7 +17,12 @@ Sentry.init({
 
 	beforeSend(event) {
 		if (event.request?.headers) {
-			delete event.request.headers["Authorization"];
+			const headers = event.request.headers as Record<string, string>;
+			for (const key of Object.keys(headers)) {
+				if (key.toLowerCase() === "authorization") {
+					delete headers[key];
+				}
+			}
 		}
 		return event;
 	},
