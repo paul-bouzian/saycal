@@ -10,6 +10,7 @@ import { VoiceMessage } from "./voice-message";
 import { UpgradeModal } from "@/features/billing/upgrade-modal";
 import { processVoiceCommand } from "@/lib/actions/voice";
 import type { VoiceResponse, ConversationMessage } from "@/lib/ai/gemini";
+import { analytics } from "@/lib/analytics/events";
 
 type PanelState =
 	| { step: "idle" }
@@ -51,6 +52,7 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 				await startRecording();
 				if (!cancelled) {
 					setState({ step: "recording", duration: 0 });
+					analytics.voiceRecordingStarted();
 				}
 			} catch {
 				if (!cancelled) {
@@ -69,6 +71,7 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 	}, []);
 
 	const handleStopRecording = async () => {
+		const recordingDuration = duration;
 		const blob = await stopRecording();
 		setState({ step: "processing", stage: "transcribing" });
 
@@ -83,6 +86,7 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 				step: "response",
 				message: response.result,
 			});
+			analytics.voiceRecordingCompleted(recordingDuration);
 
 			setConversationHistory((prev) => [
 				...prev,
@@ -92,6 +96,7 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 
 			const hasAction = response.result.action;
 			if (hasAction) {
+				analytics.eventCreated("voice");
 				queryClient.invalidateQueries({ queryKey: ["events"] });
 
 				autoCloseTimerRef.current = setTimeout(() => {
@@ -103,6 +108,7 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 				error instanceof Error ? error.message : "Processing error";
 
 			if (errorMessage.includes("Voice quota reached")) {
+				analytics.voiceQuotaReached();
 				setShowUpgradeModal(true);
 				setState({ step: "idle" });
 			} else {

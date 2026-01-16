@@ -11,6 +11,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useStripeRedirect } from "@/hooks/use-stripe-redirect";
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
+import { analytics } from "@/lib/analytics/events";
 
 interface UpgradeModalProps {
 	isOpen: boolean;
@@ -33,6 +35,17 @@ export function UpgradeModal({
 }: UpgradeModalProps) {
 	const t = useTranslations();
 	const { redirect, isLoading } = useStripeRedirect("/api/stripe/checkout");
+
+	useEffect(() => {
+		if (isOpen) {
+			analytics.upgradeModalViewed();
+		}
+	}, [isOpen]);
+
+	const handleUpgradeClick = () => {
+		analytics.upgradeModalClicked();
+		redirect();
+	};
 
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
@@ -63,7 +76,7 @@ export function UpgradeModal({
 
 				<div className="flex flex-col gap-2">
 					<Button
-						onClick={redirect}
+						onClick={handleUpgradeClick}
 						disabled={isLoading}
 						className="w-full bg-gradient-to-r from-[#B552D9] to-[#FA8485] hover:opacity-90"
 					>
