@@ -5,6 +5,7 @@ import {
 	handleCheckoutCompleted,
 	handleSubscriptionUpdated,
 	handleSubscriptionDeleted,
+	handleInvoicePaymentFailed,
 } from "@/lib/stripe/webhooks";
 
 export async function POST(request: Request) {
@@ -39,6 +40,9 @@ export async function POST(request: Request) {
 				break;
 			case "customer.subscription.deleted":
 				await handleSubscriptionDeleted(event.data.object);
+				break;
+			case "invoice.payment_failed":
+				await handleInvoicePaymentFailed(event.data.object);
 				break;
 			default:
 				console.log(`[Stripe Webhook] Unhandled event: ${event.type}`);

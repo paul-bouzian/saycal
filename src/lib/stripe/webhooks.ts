@@ -2,6 +2,8 @@ import { eq } from "drizzle-orm";
 import type Stripe from "stripe";
 import { db } from "@/db/index";
 import { userSubscriptions } from "@/db/schema";
+import { getStripe } from "./client";
+import { sendPaymentFailedEmail } from "@/lib/email/send";
 
 export async function handleCheckoutCompleted(
 	session: Stripe.Checkout.Session,
@@ -57,4 +59,19 @@ export async function handleSubscriptionDeleted(
 		.where(eq(userSubscriptions.stripeCustomerId, customerId));
 
 	console.log(`[Stripe] Subscription ${subscription.id} cancelled`);
+}
+
+export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
+	const customerId = invoice.customer as string;
+
+	try {
+		const customer = await getStripe().customers.retrieve(customerId);
+
+		if (!customer.deleted && customer.email) {
+			await sendPaymentFailedEmail(customer.email);
+			console.log(`[Stripe] Payment failed email sent to ${customer.email}`);
+		}
+	} catch (error) {
+		console.error("[Stripe] Failed to handle payment failed:", error);
+	}
 }
