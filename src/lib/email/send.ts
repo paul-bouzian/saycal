@@ -1,11 +1,11 @@
-import { resend, EMAIL_CONFIG } from "./client";
+import { resend, EMAIL_FROM } from "./client";
 import { MagicLinkEmail } from "./templates/magic-link";
 import { WelcomeEmail } from "./templates/welcome";
 import { PaymentFailedEmail } from "./templates/payment-failed";
 
 export async function sendMagicLink(to: string, magicLink: string) {
 	const { error } = await resend.emails.send({
-		from: EMAIL_CONFIG.from,
+		from: EMAIL_FROM,
 		to,
 		subject: "Votre lien de connexion SayCal",
 		react: MagicLinkEmail({ magicLink }),
@@ -19,7 +19,7 @@ export async function sendMagicLink(to: string, magicLink: string) {
 
 export async function sendWelcomeEmail(to: string, userName?: string) {
 	const { error } = await resend.emails.send({
-		from: EMAIL_CONFIG.from,
+		from: EMAIL_FROM,
 		to,
 		subject: "Bienvenue sur SayCal !",
 		react: WelcomeEmail({ userName }),
@@ -33,7 +33,7 @@ export async function sendWelcomeEmail(to: string, userName?: string) {
 
 export async function sendPaymentFailedEmail(to: string) {
 	const { error } = await resend.emails.send({
-		from: EMAIL_CONFIG.from,
+		from: EMAIL_FROM,
 		to,
 		subject: "Action requise : problème de paiement SayCal",
 		react: PaymentFailedEmail(),

@@ -18,7 +18,4 @@ export const resend = {
 	},
 };
 
-export const EMAIL_CONFIG = {
-	from: "SayCal <noreply@saycal.app>",
-	appUrl: process.env.NEXT_PUBLIC_APP_URL || "https://saycal.app",
-} as const;
+export const EMAIL_FROM = "SayCal <noreply@saycal.app>";
