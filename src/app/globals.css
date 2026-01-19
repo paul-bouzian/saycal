@@ -156,6 +156,15 @@ code {
 	body {
 		@apply bg-background text-foreground;
 	}
+	button,
+	[role="button"],
+	[type="button"],
+	[type="submit"],
+	[type="reset"],
+	select,
+	summary {
+		cursor: pointer;
+	}
 }
 
 /* SayCal Brand Gradients */
