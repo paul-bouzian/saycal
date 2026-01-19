@@ -1,6 +1,7 @@
 "use client";
 
 import { Monitor, Moon, Sun } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useId } from "react";
 import {
@@ -25,25 +26,26 @@ export default function SettingsPage() {
 	const weekStartId = useId();
 	const remindersId = useId();
 	const { theme, setTheme } = useTheme();
+	const t = useTranslations();
 
 	return (
 		<div className="max-w-2xl space-y-6 p-6">
 			<div>
-				<h1 className="text-2xl font-bold">Settings</h1>
-				<p className="text-muted-foreground">Manage your preferences</p>
+				<h1 className="text-2xl font-bold">{t("settings_title")}</h1>
+				<p className="text-muted-foreground">{t("settings_subtitle")}</p>
 			</div>
 
 			<Card>
 				<CardHeader>
-					<CardTitle>Appearance</CardTitle>
-					<CardDescription>Customize the app appearance</CardDescription>
+					<CardTitle>{t("settings_appearance_title")}</CardTitle>
+					<CardDescription>{t("settings_appearance_desc")}</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<div className="flex items-center justify-between">
 						<div className="space-y-0.5">
-							<Label>Theme</Label>
+							<Label>{t("settings_theme_label")}</Label>
 							<p className="text-sm text-muted-foreground">
-								Select your preferred theme
+								{t("settings_theme_desc")}
 							</p>
 						</div>
 						<Select value={theme} onValueChange={setTheme}>
@@ -54,30 +56,30 @@ export default function SettingsPage() {
 								<SelectItem value="light">
 									<div className="flex items-center gap-2">
 										<Sun className="h-4 w-4" />
-										<span>Light</span>
+										<span>{t("settings_theme_light")}</span>
 									</div>
 								</SelectItem>
 								<SelectItem value="dark">
 									<div className="flex items-center gap-2">
 										<Moon className="h-4 w-4" />
-										<span>Dark</span>
+										<span>{t("settings_theme_dark")}</span>
 									</div>
 								</SelectItem>
 								<SelectItem value="system">
 									<div className="flex items-center gap-2">
 										<Monitor className="h-4 w-4" />
-										<span>System</span>
+										<span>{t("settings_theme_system")}</span>
 									</div>
 								</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
 					<div className="flex items-center justify-between">
-						<Label htmlFor={timeFormatId}>24-hour time format</Label>
+						<Label htmlFor={timeFormatId}>{t("settings_time_format_24h")}</Label>
 						<Switch id={timeFormatId} defaultChecked />
 					</div>
 					<div className="flex items-center justify-between">
-						<Label htmlFor={weekStartId}>Week starts on Monday</Label>
+						<Label htmlFor={weekStartId}>{t("settings_week_starts_monday")}</Label>
 						<Switch id={weekStartId} />
 					</div>
 				</CardContent>
@@ -85,12 +87,12 @@ export default function SettingsPage() {
 
 			<Card>
 				<CardHeader>
-					<CardTitle>Notifications</CardTitle>
-					<CardDescription>Configure notification preferences</CardDescription>
+					<CardTitle>{t("settings_notifications_title")}</CardTitle>
+					<CardDescription>{t("settings_notifications_desc")}</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<div className="flex items-center justify-between">
-						<Label htmlFor={remindersId}>Event reminders</Label>
+						<Label htmlFor={remindersId}>{t("settings_event_reminders")}</Label>
 						<Switch id={remindersId} defaultChecked />
 					</div>
 				</CardContent>

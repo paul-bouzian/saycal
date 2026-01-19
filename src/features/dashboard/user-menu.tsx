@@ -2,6 +2,7 @@
 
 import { Link, useRouter } from "@/i18n/navigation";
 import { LogOut, Settings } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
@@ -16,6 +17,7 @@ import { authClient } from "@/lib/auth";
 export function UserMenu() {
 	const { data: session } = authClient.useSession();
 	const router = useRouter();
+	const t = useTranslations();
 
 	const user = session?.user;
 	const email = user?.email ?? "";
@@ -63,7 +65,7 @@ export function UserMenu() {
 				<DropdownMenuItem asChild>
 					<Link href="/app/settings" className="cursor-pointer">
 						<Settings className="mr-2 h-4 w-4" />
-						Settings
+						{t("user_menu_settings")}
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
@@ -72,7 +74,7 @@ export function UserMenu() {
 					className="cursor-pointer text-destructive focus:text-destructive"
 				>
 					<LogOut className="mr-2 h-4 w-4" />
-					Sign out
+					{t("user_menu_sign_out")}
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

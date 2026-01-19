@@ -2,6 +2,7 @@
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { Calendar, CreditCard, Settings } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
 	Sidebar,
 	SidebarContent,
@@ -17,13 +18,14 @@ import {
 import { cn } from "@/lib/utils";
 
 const navigationItems = [
-	{ title: "Calendar", url: "/app", icon: Calendar },
-	{ title: "Settings", url: "/app/settings", icon: Settings },
-	{ title: "Billing", url: "/app/billing", icon: CreditCard },
-];
+	{ titleKey: "sidebar_calendar", url: "/app", icon: Calendar },
+	{ titleKey: "sidebar_settings", url: "/app/settings", icon: Settings },
+	{ titleKey: "sidebar_billing", url: "/app/billing", icon: CreditCard },
+] as const;
 
 export function AppSidebar() {
 	const currentPath = usePathname();
+	const t = useTranslations();
 
 	return (
 		<Sidebar variant="inset">
@@ -38,7 +40,7 @@ export function AppSidebar() {
 
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel>Navigation</SidebarGroupLabel>
+					<SidebarGroupLabel>{t("sidebar_navigation")}</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{navigationItems.map((item) => {
@@ -46,13 +48,13 @@ export function AppSidebar() {
 									currentPath === item.url ||
 									(item.url === "/app" && currentPath === "/app/");
 								return (
-									<SidebarMenuItem key={item.title}>
+									<SidebarMenuItem key={item.titleKey}>
 										<SidebarMenuButton asChild isActive={isActive}>
 											<Link href={item.url}>
 												<item.icon
 													className={cn(isActive && "text-[#B552D9]")}
 												/>
-												<span>{item.title}</span>
+												<span>{t(item.titleKey)}</span>
 											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
