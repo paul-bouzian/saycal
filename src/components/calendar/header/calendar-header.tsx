@@ -22,7 +22,7 @@ export function CalendarHeader() {
 	const { view, events } = useCalendar();
 
 	return (
-		<div className="flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between">
+		<div className="flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between shrink-0">
 			<motion.div
 				className="flex items-center gap-3"
 				variants={slideFromLeft}

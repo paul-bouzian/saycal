@@ -2,7 +2,6 @@
 
 import { isSameDay, parseISO } from "date-fns";
 import { motion } from "framer-motion";
-import React from "react";
 import { fadeIn, transition } from "@/components/calendar/animations";
 import { useCalendar } from "@/components/calendar/contexts/calendar-context";
 import { AgendaEvents } from "@/components/calendar/views/agenda-view/agenda-events";
@@ -27,9 +26,10 @@ export function CalendarBody() {
 	});
 
 	return (
-		<div className="w-full h-full overflow-scroll relative">
+		<div className="relative flex flex-1 min-h-0 w-full flex-col overflow-auto lg:overflow-hidden">
 			<motion.div
 				key={view}
+				className="flex flex-1 min-h-0 flex-col"
 				initial="initial"
 				animate="animate"
 				exit="exit"

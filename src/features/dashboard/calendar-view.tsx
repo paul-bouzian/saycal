@@ -241,7 +241,7 @@ function CalendarContent() {
 			onEventDelete={handleRemoveEvent}
 		>
 			<DndProvider showConfirmation={false}>
-				<div className="h-full w-full rounded-xl border">
+				<div className="flex h-full w-full flex-col rounded-xl border">
 					<CalendarHeader />
 					<CalendarBody />
 				</div>
