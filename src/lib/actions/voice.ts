@@ -6,18 +6,21 @@ import {
 	type VoiceResponse,
 	type ConversationMessage,
 } from "@/lib/ai/gemini";
-import { checkAndIncrementQuota } from "@/lib/quota";
+import { checkVoiceAccess, checkAndIncrementVoiceDuration } from "@/lib/quota";
 import { authServer } from "@/lib/auth-server";
+
+const MAX_AUDIO_DURATION_SECONDS = 30;
+const MAX_AUDIO_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
 export interface ProcessVoiceResult {
 	transcript: string;
 	result: VoiceResponse;
-	remaining: number;
 }
 
 export async function processVoiceCommand(
 	formData: FormData,
 	conversationHistory: ConversationMessage[] = [],
+	audioDurationSeconds: number,
 ): Promise<ProcessVoiceResult> {
 	const { data: session } = await authServer.getSession();
 	if (!session?.user?.id) {
@@ -26,21 +29,38 @@ export async function processVoiceCommand(
 
 	const userId = session.user.id;
 
+	const accessCheck = await checkVoiceAccess(userId);
+	if (!accessCheck.allowed) {
+		if (accessCheck.reason === "premium_required") {
+			throw new Error("PREMIUM_REQUIRED");
+		}
+		throw new Error("Access denied");
+	}
+
 	const audioFile = formData.get("audio") as File;
 	if (!audioFile) {
 		throw new Error("Audio file missing");
 	}
 
-	console.log("[Voice] audio file received, size:", audioFile.size, "type:", audioFile.type);
-
 	if (audioFile.size === 0) {
 		throw new Error("Empty audio file");
 	}
 
-	// Atomic quota check and increment - prevents race conditions
-	const quota = await checkAndIncrementQuota(userId);
-	if (!quota.allowed) {
-		throw new Error("Voice quota reached. Upgrade to Premium to continue.");
+	if (audioFile.size > MAX_AUDIO_FILE_SIZE_BYTES) {
+		throw new Error("Audio file too large");
+	}
+
+	const clampedDuration = Math.min(
+		Math.max(1, Math.ceil(audioDurationSeconds)),
+		MAX_AUDIO_DURATION_SECONDS,
+	);
+
+	const quotaCheck = await checkAndIncrementVoiceDuration(userId, clampedDuration);
+	if (!quotaCheck.allowed) {
+		if (quotaCheck.reason === "daily_limit_reached") {
+			throw new Error("DAILY_LIMIT_REACHED");
+		}
+		throw new Error("PREMIUM_REQUIRED");
 	}
 
 	const transcript = await transcribeAudio(audioFile);
@@ -54,6 +74,5 @@ export async function processVoiceCommand(
 	return {
 		transcript,
 		result,
-		remaining: quota.remaining,
 	};
 }

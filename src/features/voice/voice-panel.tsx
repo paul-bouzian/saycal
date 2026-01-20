@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, Mic, Square, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useVoiceRecorder } from "@/hooks/use-voice-recorder";
 import { VoiceWaveform } from "./voice-waveform";
 import { VoiceMessage } from "./voice-message";
-import { UpgradeModal } from "@/features/billing/upgrade-modal";
 import { processVoiceCommand } from "@/lib/actions/voice";
 import type { VoiceResponse, ConversationMessage } from "@/lib/ai/gemini";
 import { analytics } from "@/lib/analytics/events";
@@ -25,10 +25,10 @@ interface VoicePanelProps {
 }
 
 export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
+	const t = useTranslations();
 	const [state, setState] = useState<PanelState>({ step: "idle" });
 	const [transcript, setTranscript] = useState<string | null>(null);
 	const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
-	const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 	const autoCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	const queryClient = useQueryClient();
@@ -79,7 +79,11 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 			const formData = new FormData();
 			formData.append("audio", blob, "recording.webm");
 
-			const response = await processVoiceCommand(formData, conversationHistory);
+			const response = await processVoiceCommand(
+				formData,
+				conversationHistory,
+				recordingDuration,
+			);
 
 			setTranscript(response.transcript);
 			setState({
@@ -107,10 +111,13 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 			const errorMessage =
 				error instanceof Error ? error.message : "Processing error";
 
-			if (errorMessage.includes("Voice quota reached")) {
-				analytics.voiceQuotaReached();
-				setShowUpgradeModal(true);
-				setState({ step: "idle" });
+			if (errorMessage === "DAILY_LIMIT_REACHED") {
+				setState({
+					step: "error",
+					message: t("voice_abuse_detected"),
+				});
+			} else if (errorMessage === "PREMIUM_REQUIRED") {
+				handleClose();
 			} else {
 				setState({
 					step: "error",
@@ -154,7 +161,7 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 				<button
 					type="button"
 					onClick={handleClose}
-					className="rounded-full p-1 hover:bg-muted"
+					className="cursor-pointer rounded-full p-1 hover:bg-muted"
 				>
 					<X className="size-5" />
 				</button>
@@ -170,7 +177,7 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 						<button
 							type="button"
 							onClick={handleStopRecording}
-							className="flex size-12 items-center justify-center rounded-full bg-red-500 transition-colors hover:bg-red-600"
+							className="flex size-12 cursor-pointer items-center justify-center rounded-full bg-red-500 transition-colors hover:bg-red-600"
 						>
 							<Square className="size-5 fill-white text-white" />
 						</button>
@@ -204,14 +211,14 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 							<button
 								type="button"
 								onClick={handleNewCommand}
-								className="flex-1 rounded-lg bg-gradient-to-br from-[#B552D9] to-[#FA8485] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+								className="flex-1 cursor-pointer rounded-lg bg-gradient-to-br from-[#B552D9] to-[#FA8485] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
 							>
 								New command
 							</button>
 							<button
 								type="button"
 								onClick={handleClose}
-								className="rounded-lg border px-4 py-2 text-sm hover:bg-muted"
+								className="cursor-pointer rounded-lg border px-4 py-2 text-sm hover:bg-muted"
 							>
 								Close
 							</button>
@@ -230,23 +237,13 @@ export function VoicePanel({ isOpen, onClose }: VoicePanelProps) {
 						<button
 							type="button"
 							onClick={handleNewCommand}
-							className="rounded-lg bg-primary px-4 py-2 text-sm text-white"
+							className="cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm text-white"
 						>
 							Retry
 						</button>
 					</div>
 				)}
 			</div>
-
-			<UpgradeModal
-				isOpen={showUpgradeModal}
-				onClose={() => {
-					setShowUpgradeModal(false);
-					handleClose();
-				}}
-				usageCount={100}
-				usageLimit={100}
-			/>
 		</div>
 	);
 }

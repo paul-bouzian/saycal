@@ -64,8 +64,10 @@ export const userSubscriptions = pgTable(
 		stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
 		stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
 		plan: varchar("plan", { length: 20 }).notNull().default("free"), // 'free' | 'premium'
-		voiceUsageMonth: varchar("voice_usage_month", { length: 7 }), // '2026-01'
-		voiceUsageCount: integer("voice_usage_count").notNull().default(0),
+		voiceUsageMonth: varchar("voice_usage_month", { length: 7 }), // deprecated, kept for backwards compat
+		voiceUsageCount: integer("voice_usage_count").notNull().default(0), // deprecated, kept for backwards compat
+		voiceUsageDate: varchar("voice_usage_date", { length: 10 }), // 'YYYY-MM-DD' for daily tracking
+		voiceUsageDurationSeconds: integer("voice_usage_duration_seconds").notNull().default(0),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 	},
 	(table) => ({

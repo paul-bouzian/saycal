@@ -2,7 +2,6 @@ import { CheckCircle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getSubscriptionInfo } from "@/lib/actions/billing";
 import { PricingCard } from "@/features/billing/pricing-card";
-import { VoiceUsageCard } from "@/features/billing/voice-usage-card";
 import { ManageSubscription } from "@/features/billing/manage-subscription";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -33,12 +32,6 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
 			)}
 
 			<PricingCard isPremium={subscription.plan === "premium"} />
-
-			<VoiceUsageCard
-				count={subscription.voiceUsage.count}
-				limit={subscription.voiceUsage.limit}
-				isUnlimited={subscription.voiceUsage.isUnlimited}
-			/>
 
 			{subscription.stripeCustomerId && <ManageSubscription />}
 		</div>
