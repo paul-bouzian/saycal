@@ -29,6 +29,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 					disableTransitionOnChange
 				>
 					<NeonAuthUIProvider
+						// @ts-expect-error - Type mismatch due to @better-fetch/fetch duplication in node_modules (npm vs bun resolution)
 						authClient={authClient}
 						emailOTP
 						redirectTo="/app"
